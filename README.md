@@ -81,7 +81,7 @@ A VS Code formatter for Databricks/Spark SQL that enforces your organization's f
 }
 ```
 
-# Folder Structure
+## 📁 Folder Structure
 
 ```databricks-sql-formatter/
 ├─ package.json
