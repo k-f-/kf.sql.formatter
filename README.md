@@ -1,4 +1,3 @@
-
 # Databricks SQL Formatter (Org Style)
 
 A VS Code formatter for Databricks/Spark SQL that enforces your organization's formatting standards:
