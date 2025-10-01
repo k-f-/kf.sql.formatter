@@ -58,9 +58,7 @@ A VS Code formatter for Databricks/Spark SQL that enforces your organization's f
 
 ## ⚙️ Settings
 
-
-```
-{
+```{
   "databricksSqlFormatter.keywordCase": "lower",
   "databricksSqlFormatter.functionCase": "lower",
   "databricksSqlFormatter.indent": 4,
@@ -94,6 +92,10 @@ A VS Code formatter for Databricks/Spark SQL that enforces your organization's f
 │  ├─ formatter.ts
 │  ├─ sqlLexer.ts
 │  ├─ rules.ts
+│  ├─ alias.ts
+│  ├─ comments.ts
+│  ├─ semicolons.ts
+│  ├─ utils.ts
 │  ├─ passes/
 │  │  ├─ 01-clause-structure.ts
 │  │  ├─ 02-leading-commas.ts
@@ -106,10 +108,34 @@ A VS Code formatter for Databricks/Spark SQL that enforces your organization's f
 │  │  ├─ 09-semicolons.ts
 │  │  ├─ 10-trailing-ws.ts
 │  │  ├─ 11-comment-wrap.ts
-│  ├─ alias.ts
-│  ├─ comments.ts
-│  ├─ semicolons.ts
-│  ├─ utils.ts
 └─ syntaxes/
    └─ language-configuration.json
 ```
+
+## 🚀 Usage
+
+Open any .sql, .hql, or .spark.sql file
+Run Format Document (right-click or Shift+Alt+F)
+Optional commands:
+
+Databricks SQL: Auto-Alias Everything (Semantic)
+Databricks SQL: Normalize Semicolons
+
+## 🛠 Build Instructions
+
+```npm install
+run compile
+npx vsce package
+```
+
+## 📦 Installation
+
+Open VS Code
+Go to Extensions → ... → Install from VSIX
+Select the .vsix file you built or downloaded
+
+## 📁 File Types Supported
+
+.sql
+.hql
+.spark.sql

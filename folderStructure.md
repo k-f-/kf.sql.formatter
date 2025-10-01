@@ -12,6 +12,10 @@ databricks-sql-formatter/
 │  ├─ formatter.ts
 │  ├─ sqlLexer.ts
 │  ├─ rules.ts
+│  ├─ alias.ts
+│  ├─ comments.ts
+│  ├─ semicolons.ts
+│  ├─ utils.ts
 │  ├─ passes/
 │  │  ├─ 01-clause-structure.ts
 │  │  ├─ 02-leading-commas.ts
@@ -24,9 +28,5 @@ databricks-sql-formatter/
 │  │  ├─ 09-semicolons.ts
 │  │  ├─ 10-trailing-ws.ts
 │  │  ├─ 11-comment-wrap.ts
-│  ├─ alias.ts
-│  ├─ comments.ts
-│  ├─ semicolons.ts
-│  ├─ utils.ts
 └─ syntaxes/
    └─ language-configuration.json

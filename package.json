@@ -1,1 +1,138 @@
-/* package.json content already provided */
+{
+  "name": "databricks-sql-formatter",
+  "displayName": "Databricks SQL Formatter (Org Style)",
+  "description": "SQL formatter for Databricks/Spark SQL matching your org's conventions.",
+  "version": "0.1.0",
+  "publisher": "your-org",
+  "engines": { "vscode": "^1.89.0" },
+  "categories": [ "Formatters" ],
+  "activationEvents": [
+    "onLanguage:sql",
+    "onLanguage:hql",
+    "onLanguage:spark-sql",
+    "onCommand:databricksSqlFormatter.autoAliasAll",
+    "onCommand:databricksSqlFormatter.fixSemicolons"
+  ],
+  "contributes": {
+    "languages": [
+      { "id": "sql", "aliases": ["SQL"], "extensions": [".sql", ".hql"], "configuration": "./syntaxes/language-configuration.json" },
+      { "id": "spark-sql", "aliases": ["Spark SQL"], "extensions": [".spark.sql"] }
+    ],
+    "commands": [
+      {
+        "command": "databricksSqlFormatter.autoAliasAll",
+        "title": "Databricks SQL: Auto-Alias Everything (Semantic)"
+      },
+      {
+        "command": "databricksSqlFormatter.fixSemicolons",
+        "title": "Databricks SQL: Normalize Semicolons"
+      }
+    ],
+    "configuration": {
+      "title": "Databricks SQL Formatter",
+      "properties": {
+        "databricksSqlFormatter.keywordCase": {
+          "type": "string",
+          "enum": ["lower", "upper", "preserve"],
+          "default": "lower",
+          "description": "Keyword letter case"
+        },
+        "databricksSqlFormatter.functionCase": {
+          "type": "string",
+          "enum": ["lower", "upper", "preserve"],
+          "default": "lower",
+          "description": "Function name letter case"
+        },
+        "databricksSqlFormatter.indent": {
+          "type": "integer",
+          "default": 4,
+          "minimum": 2,
+          "maximum": 8,
+          "description": "Spaces per indent level"
+        },
+        "databricksSqlFormatter.leadingCommas": {
+          "type": "boolean",
+          "default": true,
+          "description": "Use leading commas for lists"
+        },
+        "databricksSqlFormatter.dialect": {
+          "type": "string",
+          "enum": ["spark", "hive", "ansi"],
+          "default": "spark",
+          "description": "SQL dialect"
+        },
+        "databricksSqlFormatter.aliasAlignmentScope": {
+          "type": "string",
+          "enum": ["file", "select", "none"],
+          "default": "file",
+          "description": "Scope for alias alignment column"
+        },
+        "databricksSqlFormatter.aliasMinGap": {
+          "type": "integer",
+          "default": 8,
+          "description": "Minimum spaces between expression end and 'as'"
+        },
+        "databricksSqlFormatter.aliasMaxColumnCap": {
+          "type": "integer",
+          "default": 120,
+          "description": "Smart cap for alias alignment column"
+        },
+        "databricksSqlFormatter.forceAsForAliases": {
+          "type": "string",
+          "enum": ["existingOnly", "off"],
+          "default": "existingOnly",
+          "description": "Insert 'as' only when alias already exists (no derivation by default)"
+        },
+        "databricksSqlFormatter.join.inlineSingleCondition": {
+          "type": "boolean",
+          "default": true,
+          "description": "Keep single-condition ON predicates inline if short"
+        },
+        "databricksSqlFormatter.join.inlineMaxWidth": {
+          "type": "integer",
+          "default": 100,
+          "description": "Max width for inline ON before wrapping"
+        },
+        "databricksSqlFormatter.using.multiLineThreshold": {
+          "type": "integer",
+          "default": 2,
+          "description": "USING list becomes multi-line when count >= threshold"
+        },
+        "databricksSqlFormatter.semicolon.style": {
+          "type": "string",
+          "enum": ["leading-when-multi"],
+          "default": "leading-when-multi",
+          "description": "Leading semicolons for statements 2..N (no trailing final semicolon)"
+        },
+        "databricksSqlFormatter.semicolon.skipCommentLines": {
+          "type": "boolean",
+          "default": true,
+          "description": "Do not place leading semicolon on comment lines"
+        },
+        "databricksSqlFormatter.trimTrailingWhitespace": {
+          "type": "boolean",
+          "default": true,
+          "description": "Remove trailing whitespace"
+        },
+        "databricksSqlFormatter.comment.wrapColumn": {
+          "type": "integer",
+          "default": 100,
+          "description": "Wrap comments at this column"
+        }
+      }
+    }
+  },
+  "main": "./dist/extension.js",
+  "scripts": {
+    "compile": "tsc -p ./",
+    "watch": "tsc -w -p ./",
+    "package": "vsce package",
+    "lint": "echo \"(add eslint here if desired)\""
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.30",
+    "typescript": "^5.5.4",
+    "vsce": "^2.15.0",
+    "vscode": "^1.1.37"
+  }
+}
