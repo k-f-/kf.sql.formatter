@@ -60,7 +60,8 @@ A VS Code formatter for Databricks/Spark SQL that enforces your organization's f
 ## ⚙️ Settings
 
 
-```{
+```
+{
   "databricksSqlFormatter.keywordCase": "lower",
   "databricksSqlFormatter.functionCase": "lower",
   "databricksSqlFormatter.indent": 4,
@@ -77,7 +78,8 @@ A VS Code formatter for Databricks/Spark SQL that enforces your organization's f
   "databricksSqlFormatter.semicolon.skipCommentLines": true,
   "databricksSqlFormatter.trimTrailingWhitespace": true,
   "databricksSqlFormatter.comment.wrapColumn": 100
-}```
+}
+```
 
 # Folder Structure
 
@@ -110,4 +112,5 @@ A VS Code formatter for Databricks/Spark SQL that enforces your organization's f
 │  ├─ semicolons.ts
 │  ├─ utils.ts
 └─ syntaxes/
-   └─ language-configuration.json```
+   └─ language-configuration.json
+```
