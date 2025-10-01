@@ -1,0 +1,1 @@
+/* Expanded pass 04-namedstruct-align.ts */

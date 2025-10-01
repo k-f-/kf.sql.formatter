@@ -1,0 +1,1 @@
+/* Expanded pass 06-join-where-align.ts */

@@ -1,0 +1,1 @@
+/* Expanded pass 10-trailing-ws.ts */
