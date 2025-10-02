@@ -1,167 +1,273 @@
--- =============================================================================
--- 03-joins.sql
--- All types of JOIN operations
--- =============================================================================
+                                                                                                                                                                                  -- =============================================================================
+                                                                                                                                                                                  -- 03-joins.sql
+                                                                                                                                                                                  -- all types of
+join operations
+                                                                                                                                                                                  -- =============================================================================
 
--- Simple INNER JOIN
-SELECT 
-    o.order_id,
-    o.order_date,
-    c.customer_name
-FROM orders o
-INNER JOIN customers c ON o.customer_id = c.customer_id;
+                                                                                                                                                                                  -- Simple
+  inner
+join
+;
+select
 
--- LEFT JOIN
-SELECT 
-    c.customer_id,
-    c.customer_name,
-    o.order_id
-FROM customers c
-LEFT JOIN orders o ON c.customer_id = o.customer_id;
+  o.order_id
+  ,o.order_date,
+  c.customer_name
+from orders o
+  inner
+join customers c
+on o.customer_id = c.customer_id
 
--- RIGHT JOIN
-SELECT 
-    o.order_id,
-    c.customer_name
-FROM orders o
-RIGHT JOIN customers c ON o.customer_id = c.customer_id;
+                                                                                                                                                                                  --
+  left
+join
+;
+select
 
--- FULL OUTER JOIN
-SELECT 
-    c.customer_id,
-    c.customer_name,
-    o.order_id
-FROM customers c
-FULL OUTER JOIN orders o ON c.customer_id = o.customer_id;
+  c.customer_id
+  ,c.customer_name,
+  o.order_id
+from customers c
+  left
+join orders o
+on c.customer_id = o.customer_id
 
--- Multiple JOINs
-SELECT 
-    o.order_id,
-    c.customer_name,
-    p.product_name,
-    oi.quantity
-FROM orders o
-JOIN customers c ON o.customer_id = c.customer_id
-JOIN order_items oi ON o.order_id = oi.order_id
-JOIN products p ON oi.product_id = p.product_id;
+                                                                                                                                                                                  --
+  right
+join
+;
+select
 
--- JOIN with multiple conditions
-SELECT 
-    e1.employee_name,
-    e2.manager_name
-FROM employees e1
-JOIN employees e2 
-    ON e1.manager_id = e2.employee_id 
-   AND e1.department = e2.department;
+  o.order_id
+  ,c.customer_name
+from orders o
+  right
+join customers c
+on o.customer_id = c.customer_id
 
--- JOIN with complex ON clause
-SELECT 
-    s.sale_id,
-    c.customer_name,
-    p.product_name
-FROM sales s
-JOIN customers c 
-    ON s.customer_id = c.customer_id 
-   AND s.sale_date >= c.registration_date
-JOIN products p 
-    ON s.product_id = p.product_id 
-   AND p.category = 'Electronics';
+                                                                                                                                                                                  -- full
+  outer
+join
+;
+select
 
--- Self-join
-SELECT 
-    e1.employee_name as employee,
-    e2.employee_name as manager
-FROM employees e1
-LEFT JOIN employees e2 ON e1.manager_id = e2.employee_id;
+  c.customer_id
+  ,c.customer_name,
+  o.order_id
+from customers c
+  full
+  outer
+join orders o
+on c.customer_id = o.customer_id
 
--- CROSS JOIN
-SELECT 
-    c.color,
-    s.size
-FROM colors c
-CROSS JOIN sizes s;
+                                                                                                                                                                                  -- Multiple JOINs
+;
+select
 
--- JOIN with USING clause (1 column - should inline)
-SELECT order_id, customer_name
-FROM orders
-JOIN customers USING (customer_id);
+  o.order_id
+  ,c.customer_name,
+  p.product_name
+  ,oi.quantity
+from orders o
+join customers c
+on o.customer_id = c.customer_id
+join order_items oi
+on o.order_id = oi.order_id
+join products p
+on oi.product_id = p.product_id
 
--- JOIN with USING clause (2+ columns - should break to multi-line)
-SELECT *
-FROM table1
-JOIN table2 USING (id, department, location);
+                                                                                                                                                                                  --
+join
+;
+with multiple conditions
+select
 
--- JOIN with WHERE filter
-SELECT 
-    o.order_id,
-    c.customer_name,
-    o.order_total
-FROM orders o
-JOIN customers c ON o.customer_id = c.customer_id
-WHERE o.order_date >= '2024-01-01'
-  AND c.country = 'US';
+  e1.employee_name
+  ,e2.manager_name
+from employees e1
+join employees e2
+on e1.manager_id = e2.employee_id
+  and e1.department = e2.department
 
--- Multiple LEFT JOINs
-SELECT 
-    c.customer_id,
-    c.customer_name,
-    o.order_id,
-    s.shipment_id,
-    p.payment_id
-FROM customers c
-LEFT JOIN orders o ON c.customer_id = o.customer_id
-LEFT JOIN shipments s ON o.order_id = s.order_id
-LEFT JOIN payments p ON o.order_id = p.order_id;
+                                                                                                                                                                                  --
+join
+;
+with complex
+on clause
+select
 
--- Mixed JOIN types
-SELECT 
-    e.employee_name,
-    d.department_name,
-    p.project_name
-FROM employees e
-INNER JOIN departments d ON e.department_id = d.department_id
-LEFT JOIN employee_projects ep ON e.employee_id = ep.employee_id
-LEFT JOIN projects p ON ep.project_id = p.project_id;
+  s.sale_id
+  ,c.customer_name,
+  p.product_name
+from sales s
+join customers c
+on s.customer_id = c.customer_id
+  and s.sale_date >= c.registration_date
+join products p
+on s.product_id = p.product_id
+  and p.category = 'Electronics'
 
--- JOIN with subquery
-SELECT 
-    c.customer_name,
-    summary.order_count,
-    summary.total_spent
-FROM customers c
-JOIN (
-    SELECT 
-        customer_id,
-        COUNT(*) as order_count,
-        SUM(order_total) as total_spent
-    FROM orders
-    GROUP BY customer_id
-) summary ON c.customer_id = summary.customer_id;
+                                                                                                                                                                                  -- Self-join
+;
+select
 
--- JOIN with CTE
-WITH top_customers AS (
-    SELECT customer_id, SUM(order_total) as lifetime_value
-    FROM orders
-    GROUP BY customer_id
-    ORDER BY lifetime_value DESC
-    LIMIT 100
-)
-SELECT 
-    c.customer_name,
-    c.email,
-    tc.lifetime_value
-FROM customers c
-JOIN top_customers tc ON c.customer_id = tc.customer_id;
+  e1.employee_name                                                                                                                                                                as employee
+  ,e2.employee_name                                                                                                                                                               as manager
+from employees e1
+  left
+join employees e2
+on e1.manager_id = e2.employee_id
 
--- NATURAL JOIN (Spark/Databricks specific)
-SELECT *
-FROM table1
-NATURAL JOIN table2;
+                                                                                                                                                                                  --
+  cross
+join
+;
+select
 
--- LATERAL VIEW (Spark specific)
-SELECT id, exploded_col
-FROM source_table
-LATERAL VIEW EXPLODE(array_column) t AS exploded_col;
+  c.color
+  ,s.size
+from colors c
+  cross
+join sizes s
 
--- Short JOIN (should inline if ≤100 chars)
-SELECT * FROM orders o JOIN customers c ON o.customer_id = c.customer_id;
+                                                                                                                                                                                  --
+join
+;
+with
+using clause(1 column - should inline)
+select
+  order_id, customer_name
+from orders
+join customers
+using(customer_id)
+
+                                                                                                                                                                                  --
+join
+;
+with
+using clause(2+ columns - should break to multi-line)
+select
+  *
+from table1
+join table2
+using(id, department, location)
+
+                                                                                                                                                                                  --
+join
+;
+with
+where filter
+select
+
+  o.order_id
+  ,c.customer_name,
+  o.order_total
+from orders o
+join customers c
+on o.customer_id = c.customer_id
+where o.order_date >= '2024-01-01'
+  and c.country = 'US'
+
+                                                                                                                                                                                  -- Multiple left JOINs
+;
+select
+
+  c.customer_id
+  ,c.customer_name,
+  o.order_id
+  ,s.shipment_id,
+  p.payment_id
+from customers c
+  left
+join orders o
+on c.customer_id = o.customer_id
+  left
+join shipments s
+on o.order_id = s.order_id
+  left
+join payments p
+on o.order_id = p.order_id
+
+                                                                                                                                                                                  -- Mixed
+join types
+;
+select
+
+  e.employee_name
+  ,d.department_name,
+  p.project_name
+from employees e
+  inner
+join departments d
+on e.department_id = d.department_id
+  left
+join employee_projects ep
+on e.employee_id = ep.employee_id
+  left
+join projects p
+on ep.project_id = p.project_id
+
+                                                                                                                                                                                  --
+join
+;
+with subquery
+select
+
+  c.customer_name
+  ,summary.order_count,
+  summary.total_spent
+from customers c
+join(
+select
+
+  customer_id
+  ,count(*)                                                                                                                                                                       as order_count,
+  sum(order_total)                                                                                                                                                                as total_spent
+from orders
+group by customer_id
+with CTE
+with top_customers as(
+select
+  customer_id, sum(order_total)                                                                                                                                                   as lifetime_value
+from orders
+group by customer_id
+order by lifetime_value DESC
+select
+
+  c.customer_name
+  ,c.email,
+  tc.lifetime_value
+from customers c
+join top_customers tc
+on c.customer_id = tc.customer_id
+
+                                                                                                                                                                                  -- NATURAL
+join(Spark/Databricks specific)
+select
+  *
+from table1
+  NATURAL
+join table2
+
+                                                                                                                                                                                  --
+  LATERAL view(Spark specific)
+select
+  id, exploded_col
+from source_table
+  LATERAL VIEW explode(array_column) t                                                                                                                                            as exploded_col
+
+                                                                                                                                                                                  -- Short
+join(should inline if ≤100 chars)
+select
+  *
+from orders o
+join customers c
+on o.customer_id = c.customer_id
+  ) summary
+on c.customer_id = summary.customer_id
+
+
+join
+limit 100
+  )
+;

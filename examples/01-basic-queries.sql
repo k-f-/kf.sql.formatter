@@ -1,96 +1,139 @@
--- =============================================================================
--- 01-basic-queries.sql
--- Simple SELECT statements to test basic formatting
--- =============================================================================
+                                                                                                                                                                                  -- =============================================================================
+                                                                                                                                                                                  -- 01-basic-queries.sql
+                                                                                                                                                                                  -- Simple
+;
+select
+  statements to test basic formatting
+                                                                                                                                                                                  -- =============================================================================
 
--- Single table, simple WHERE
-SELECT id, name, email
-FROM users
-WHERE status = 'active';
+                                                                                                                                                                                  -- Single table, simple
+where
+;
+select
+  id, name, email
+from users
+where status = 'active'
 
--- Multiple columns, ORDER BY
-SELECT 
-    user_id,
-    first_name,
-    last_name,
-    created_at
-FROM customers
-WHERE country = 'US'
-ORDER BY created_at DESC;
+                                                                                                                                                                                  -- Multiple columns
+,order by
+;
+select
 
--- GROUP BY with aggregate
-SELECT 
-    department,
-    COUNT(*) as employee_count,
-    AVG(salary) as avg_salary
-FROM employees
-GROUP BY department
-ORDER BY avg_salary DESC;
+  user_id
+  ,first_name,
+  last_name
+,created_at
+from customers
+where country = 'US'
+order by created_at DESC
+group by
+;
+with aggregate
+select
 
--- Multiple predicates in WHERE
-SELECT product_id, product_name, price
-FROM products
-WHERE category = 'Electronics'
-  AND price > 100
-  AND in_stock = true;
+  department
+  ,count(*)                                                                                                                                                                       as employee_count,
+  avg(salary)                                                                                                                                                                     as avg_salary
+from employees
+group by department
+order by avg_salary DESC
+where
+;
+select
+  product_id, product_name, price
+from products
+where category = 'Electronics'
+  and price > 100
 
--- DISTINCT
-SELECT DISTINCT country
-FROM customers
-ORDER BY country;
+                                                                                                                                                                                  -- distinct
+;
+select
+  distinct
+  country
+from customers
+order by country
+select
+  *
+from orders
+order by order_date DESC
+;
+select
+;
+select
 
--- LIMIT
-SELECT *
-FROM orders
-ORDER BY order_date DESC
-LIMIT 10;
+  order_id
+  ,quantity,
+  unit_price
+  ,quantity * unit_price                                                                                                                                                          as total_price
+from order_items
 
--- Simple math in SELECT
-SELECT 
-    order_id,
-    quantity,
-    unit_price,
-    quantity * unit_price as total_price
-FROM order_items;
+                                                                                                                                                                                  -- BETWEEN predicate
+;
+select
+  *
+from sales
+where sale_date BETWEEN '2024-01-01' and '2024-12-31'
 
--- BETWEEN predicate
-SELECT *
-FROM sales
-WHERE sale_date BETWEEN '2024-01-01' AND '2024-12-31';
+                                                                                                                                                                                  -- in predicate
+;
+select
+  name, department
+from employees
+where department in('Engineering', 'Sales', 'Marketing')
 
--- IN predicate
-SELECT name, department
-FROM employees
-WHERE department IN ('Engineering', 'Sales', 'Marketing');
+                                                                                                                                                                                  -- LIKE predicate
+;
+select
+  email
+from users
+where email LIKE '%@example.com'
 
--- LIKE predicate
-SELECT email
-FROM users
-WHERE email LIKE '%@example.com';
+                                                                                                                                                                                  -- IS NULL / IS NOT NULL
+;
+select
+  user_id, last_login
+from users
+where last_login IS NULL
 
--- IS NULL / IS NOT NULL
-SELECT user_id, last_login
-FROM users
-WHERE last_login IS NULL;
+                                                                                                                                                                                  --
+having clause
+;
+select
 
--- HAVING clause
-SELECT 
-    category,
-    COUNT(*) as product_count
-FROM products
-GROUP BY category
-HAVING COUNT(*) > 5;
+  category
+  ,count(*)                                                                                                                                                                       as product_count
+from products
+group by category
+;
+select
 
--- Multiple aggregates
-SELECT 
-    region,
-    SUM(revenue) as total_revenue,
-    AVG(revenue) as avg_revenue,
-    MIN(revenue) as min_revenue,
-    MAX(revenue) as max_revenue,
-    COUNT(*) as sale_count
-FROM sales
-GROUP BY region;
+  region
+  ,sum(revenue)                                                                                                                                                                   as total_revenue,
+  avg(revenue)                                                                                                                                                                    as avg_revenue
+  ,min(revenue)                                                                                                                                                                   as min_revenue,
+  max(revenue)                                                                                                                                                                    as max_revenue
+  ,count(*)                                                                                                                                                                       as sale_count
+from sales
+group by region
+select
+  *
+from simple_table
+where id = 1
+  and in_stock = true
+having count(*) > 5
 
--- Short query (should stay on one line if ≤100 chars)
-SELECT * FROM simple_table WHERE id = 1;
+                                                                                                                                                                                  -- Multiple aggregates
+
+                                                                                                                                                                                  -- Short query(should stay
+on one line if ≤100 chars)
+
+
+
+                                                                                                                                                                                  -- Multiple predicates in
+
+
+limit
+limit 10
+
+                                                                                                                                                                                  -- Simple math in
+;
