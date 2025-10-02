@@ -1,6 +1,6 @@
 {
-  "name": "databricks-sql-formatter",
-  "displayName": "Databricks SQL Formatter (Org Style)",
+  "name": "kf-sql-formatter",
+  "displayName": "KF SQL Formatter (Databricks/Spark)",
   "description": "SQL formatter for Databricks/Spark SQL matching your org's conventions.",
   "version": "0.0.1",
   "publisher": "kef",
