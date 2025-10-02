@@ -27,7 +27,7 @@ jobs:
       run: npm run compile
 
     - name: Run formatter tests
-      run: node test-examples-formatter.js
+      run: node tests/test-examples.js
 
     - name: Lint markdown files
       run: npm run lint
@@ -43,7 +43,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     needs: test
-    
+
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
