@@ -1,3 +1,21 @@
+# Build output
+dist/
+*.vsix
+
+# Dependencies
+node_modules/
+
+# IDE
+.vscode/
+*.code-workspace
+
+# Logs
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
 # Node modules
 node_modules/
 
@@ -10,6 +28,5 @@ package-lock.json
 # VSCode
 .vscode/
 
-# OS files
-.DS_Store
-Thumbs.db
+
+
