@@ -89,7 +89,31 @@ npm install        # Install dependencies
 npm run compile    # Compile TypeScript to dist/
 npm run watch      # Watch mode for development
 npm run package    # Create .vsix extension package
+npm run lint       # Check markdown files for linting errors
+npm run lint:fix   # Auto-fix markdown linting errors
 ```
+
+### Documentation Quality
+
+**When creating or editing Markdown files**:
+
+1. **Always run the linter** after creating/editing:
+
+   ```bash
+   npm run lint:fix
+   ```
+
+2. **Linter configuration**: `.markdownlint.json`
+3. **What gets fixed automatically**:
+   - Blank lines around headings
+   - Blank lines around lists and code blocks
+   - Trailing spaces
+   - List indentation
+   - Consistent heading styles
+
+4. **Commit clean markdown**:
+   - Run `npm run lint:fix` before committing
+   - Verify with `npm run lint` (should show no errors)
 
 ### File Organization
 

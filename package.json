@@ -129,11 +129,13 @@
     "compile": "tsc -p ./",
     "watch": "tsc -w -p ./",
     "package": "vsce package",
-    "lint": "echo \"(add eslint here if desired)\""
+    "lint": "markdownlint '**/*.md' --ignore node_modules --ignore dist",
+    "lint:fix": "markdownlint '**/*.md' --ignore node_modules --ignore dist --fix"
   },
   "devDependencies": {
     "@types/node": "^20.11.30",
     "@vscode/vsce": "^2.24.0",
+    "markdownlint-cli": "^0.39.0",
     "typescript": "^5.5.4",
     "vscode": "^1.1.37"
   }
