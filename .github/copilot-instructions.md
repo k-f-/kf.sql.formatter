@@ -57,10 +57,30 @@ The codebase follows a multi-pass formatting architecture:
 
 ### Testing
 
-- Currently, the project does not have automated tests
-- When adding features, **manually test** with various SQL samples
-- Test edge cases: empty files, single statements, multi-statement files, CTEs
-- Verify formatting idempotence: format(format(text)) === format(text)
+**CRITICAL**: See `TESTING_PLAN.md` for comprehensive testing strategy.
+
+#### Testing Requirements (All Changes)
+1. **Aesthetic Validation**: Test against `examples/` directory
+2. **Execution Safety**: Formatted SQL must remain 100% executable
+3. **Idempotence**: Verify `format(format(text)) === format(text)`
+4. **No Regressions**: Compare against golden files (when available)
+
+#### Before Committing Any Formatter Changes
+- [ ] Test with all files in `examples/` directory
+- [ ] Verify no execution-breaking changes (syntax must remain valid)
+- [ ] Check idempotence (format twice, compare results)
+- [ ] Update tests if behavior changed
+- [ ] Update documentation if user-facing change
+
+#### Test Files
+- `examples/01-basic-queries.sql` - Simple SELECT statements
+- `examples/02-ctes-subqueries.sql` - CTEs and nested queries
+- `examples/03-joins.sql` - All join types and conditions
+- `examples/04-expressions.sql` - CASE, window functions, etc.
+- `examples/05-spark-specific.sql` - Databricks/Spark features
+- `examples/06-dml-ddl.sql` - INSERT, UPDATE, MERGE, etc.
+- `examples/07-comments-strings.sql` - Comment and string handling
+- `examples/08-edge-cases.sql` - Edge cases and stress tests
 
 ### Building
 
@@ -153,17 +173,73 @@ Avoid adding new dependencies unless absolutely necessary.
 - Avoid regex backtracking on large files
 - Cache expensive computations when possible
 
+## Branch Strategy
+
+### Branch Naming Conventions
+Use these prefixes for all branches:
+- `feature/*` - New features or enhancements (e.g., `feature/test-suite`)
+- `bugfix/*` - Bug fixes (e.g., `bugfix/alias-alignment-multiline`)
+- `refactor/*` - Code refactoring without behavior changes
+- `docs/*` - Documentation updates only
+- `test/*` - Test-related changes only
+
+### Workflow for New Features
+```bash
+# Create feature branch from main
+git checkout main
+git pull origin main
+git checkout -b feature/<descriptive-name>
+
+# Work incrementally, commit often
+git add .
+git commit -m "feat: <description>"
+
+# Push feature branch
+git push origin feature/<descriptive-name>
+
+# When complete, merge to main
+git checkout main
+git merge feature/<descriptive-name>
+git push origin main
+
+# Tag releases
+git tag -a v0.0.x -m "Release description"
+git push origin v0.0.x
+```
+
+### Development Branches
+- **`main`**: Production-ready code, tagged releases only
+- **`develop`**: (Optional) Integration branch for multiple features
+- **`feature/*`**: Individual feature development
+- **`bugfix/*`**: Bug fixes
+
 ## Contributing
 
-1. Follow existing code patterns and style
-2. Keep changes focused and minimal
-3. Test thoroughly with various SQL samples
-4. Update documentation for user-facing changes
-5. Ensure TypeScript compilation succeeds without errors
+1. Create appropriate feature/bugfix branch
+2. Follow existing code patterns and style
+3. Keep changes focused and minimal
+4. **Test thoroughly** (see Testing section above)
+5. Update documentation for user-facing changes
+6. Ensure TypeScript compilation succeeds without errors
+7. Verify all examples still format correctly
+
+## Testing Workflow (MANDATORY)
+
+When making changes to formatting logic:
+1. **Create feature branch**: `feature/<descriptive-name>`
+2. **Make changes incrementally** with frequent commits
+3. **Test against `examples/`** directory after each change
+4. **Run execution safety tests** (when available)
+5. **Verify idempotence** - format twice, compare
+6. **Update tests** to cover new behavior
+7. **Update documentation** if user-facing
+8. **Merge to main** only after all tests pass
 
 ## Getting Help
 
+- Review `TESTING_PLAN.md` for comprehensive testing strategy
 - Review `projectSpec.md` for detailed formatting rules
 - Check `README.md` for user-facing feature documentation
 - Examine existing passes in `src/passes/` for patterns
 - Look at `src/formatter.ts` to understand pass orchestration
+- Test with `examples/` directory for real-world cases
