@@ -1,0 +1,94 @@
+name: Build and Release
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to release (e.g., 1.0.0)'
+        required: true
+        type: string
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+
+    - name: Install dependencies
+      run: npm ci
+
+    - name: Compile TypeScript
+      run: npm run compile
+
+    - name: Install vsce
+      run: npm install -g @vscode/vsce
+
+    - name: Get package name and version
+      id: package_info
+      run: |
+        PACKAGE_NAME=$(node -p "require('./package.json').name")
+        if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+          VERSION="${{ github.event.inputs.version }}"
+        else
+          VERSION="${GITHUB_REF#refs/tags/v}"
+        fi
+        echo "PACKAGE_NAME=$PACKAGE_NAME" >> $GITHUB_OUTPUT
+        echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
+
+    - name: Package extension
+      run: vsce package
+
+    - name: Create Release
+      id: create_release
+      uses: softprops/action-gh-release@v1
+      with:
+        tag_name: v${{ steps.package_info.outputs.VERSION }}
+        name: Release v${{ steps.package_info.outputs.VERSION }}
+        body: |
+          ## Changes in this Release
+          - See [CHANGELOG.md](https://github.com/${{ github.repository }}/blob/main/CHANGELOG.md) for details
+
+          ## Installation
+          1. Download the `.vsix` file below
+          2. Open VS Code
+          3. Run `Extensions: Install from VSIX...` from the Command Palette (Ctrl+Shift+P / Cmd+Shift+P)
+          4. Select the downloaded file
+        draft: false
+        prerelease: false
+        files: |
+          *.vsix
+
+    - name: Update README
+      run: |
+        VERSION="${{ steps.package_info.outputs.VERSION }}"
+        PACKAGE_NAME="${{ steps.package_info.outputs.PACKAGE_NAME }}"
+        RELEASE_URL="https://github.com/${{ github.repository }}/releases/download/v${VERSION}/${PACKAGE_NAME}-${VERSION}.vsix"
+
+        # Update the download link in README
+        sed -i "s|https://github.com/.*/releases/download/.*/.*\.vsix|${RELEASE_URL}|g" README.md || true
+
+        # Update the version badge
+        sed -i "s|version-[0-9]*\.[0-9]*\.[0-9]*-blue|version-${VERSION}-blue|g" README.md || true
+
+    - name: Commit README changes
+      run: |
+        git config --local user.email "github-actions[bot]@users.noreply.github.com"
+        git config --local user.name "github-actions[bot]"
+        git add README.md
+        git diff --staged --quiet || git commit -m "docs: update README with version ${{ steps.package_info.outputs.VERSION }}"
+
+    - name: Push changes
+      uses: ad-m/github-push-action@master
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        branch: main

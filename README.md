@@ -1,6 +1,32 @@
 # Databricks SQL Formatter (Org Style)
 
-A VS Code formatter for Databricks/Spark SQL that enforces your organization's formatting standards:
+![Build Status](https://github.com/k-f-/kf.sql.formatter/workflows/CI/badge.svg)
+![Version](https://img.shields.io/badge/version-0.0.1-blue)
+[![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
+
+A VS Code formatter for Databricks/Spark SQL that enforces your organization's formatting standards.
+
+## Installation
+
+### Option 1: Direct Download (Recommended)
+
+**[⬇️ Download Latest Release (v0.0.1)](https://github.com/k-f-/kf.sql.formatter/releases/download/v0.0.1/databricks-sql-formatter-0.0.1.vsix)**
+
+After downloading:
+1. Open VS Code
+2. Press `Ctrl+Shift+P` (Windows/Linux) or `Cmd+Shift+P` (Mac)
+3. Type "Extensions: Install from VSIX..."
+4. Select the downloaded `.vsix` file
+
+### Option 2: Manual Build
+
+```bash
+git clone https://github.com/k-f-/kf.sql.formatter.git
+cd kf.sql.formatter
+npm install
+npm run compile
+npx vsce package
+```
 
 ## ✨ Key Features
 

@@ -31,8 +31,14 @@ export interface FormatterOptions {
 }
 
 export function formatDocument(text: string, opts: FormatterOptions): string {
+  // Ensure leading commas is always enabled
+  const enforceOpts = {
+    ...opts,
+    leadingCommas: true
+  };
+
   // 0) Case normalization for keywords/functions (non-invasive)
-  let t = normalizeKeywordCase(text, opts.keywordCase, opts.functionCase);
+  let t = normalizeKeywordCase(text, enforceOpts.keywordCase, enforceOpts.functionCase);
 
   // 1) Split into statements (CTE safe: DO NOT split between with...select/insert/update/delete/merge)
   const stmts = splitStatementsCTESafe(t);
@@ -40,27 +46,27 @@ export function formatDocument(text: string, opts: FormatterOptions): string {
   // 2) Format each statement independently, then rejoin (semicolon handling later)
   const formattedStatements = stmts.map((stmt) => {
     let s = stmt;
-    s = clauseStructurePass(s, opts);
-    s = leadingCommasPass(s, opts);
-    s = breakersPass(s, opts);              // CASE/OVER/long functions + USING threshold
-    s = namedStructAlignPass(s, opts);
-    s = aliasAlignPass(s, opts);            // enforce 'as' for existing aliases, compute alias col
-    s = joinWhereAlignPass(s, opts);        // align comments in join/where
-    s = groupOrderAlignPass(s, opts);       // align comments in group/order
-    s = updateSetAlignPass(s, opts);        // align '=' in update set
-    s = trailingWhitespacePass(s, opts);    // trim trailing ws
+    s = clauseStructurePass(s, enforceOpts);      // Clause structure with keyword casing
+    s = leadingCommasPass(s, enforceOpts);        // Leading commas (no space after comma)
+    s = breakersPass(s, enforceOpts);             // CASE/OVER/long functions
+    s = namedStructAlignPass(s, enforceOpts);     // named_struct alignment
+    s = aliasAlignPass(s, enforceOpts);           // File-wide alias alignment at column 80+
+    s = joinWhereAlignPass(s, enforceOpts);       // Align comments in join/where
+    s = groupOrderAlignPass(s, enforceOpts);      // Align comments in group/order
+    s = updateSetAlignPass(s, enforceOpts);       // Align '=' in update set
+    s = trailingWhitespacePass(s, enforceOpts);   // Trim trailing whitespace
     return s;
   });
 
   // 3) Rejoin and apply semicolon policy across statements
   let joined = formattedStatements.join('\n');
-  joined = semicolonsPass(joined, opts);        // leading-when-multi + W-Lead + CTE safety
+  joined = semicolonsPass(joined, enforceOpts);        // Inline semicolons with following statement
 
-  // 4) Global alias/comment columns (requires whole file)
-  const withGlobalCols = computeGlobalColumns(joined, opts);
+  // 4) Apply alias alignment again for global consistency
+  joined = aliasAlignPass(joined, enforceOpts);
 
   // 5) Wrap long comments last (to avoid breaking alignment calc)
-  const finalText = commentWrapPass(withGlobalCols, opts);
+  const finalText = commentWrapPass(joined, enforceOpts);
 
   return finalText;
 }

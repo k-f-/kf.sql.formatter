@@ -2,30 +2,54 @@ import { FormatterOptions } from '../formatter';
 import { lines, rejoin } from '../utils';
 
 export function commentWrapPass(text: string, opts: FormatterOptions): string {
-  const wrapCol = opts.commentWrapColumn || 100;
+  const wrapCol = opts.commentWrapColumn || 120; // Wrap at 100-120 characters
   const ls = lines(text);
   const out: string[] = [];
 
   for (const line of ls) {
-    if (/--/.test(line)) {
-      const idx = line.indexOf('--');
-      const code = line.slice(0, idx).trimEnd();
-      const comment = line.slice(idx + 2).trim();
+    const commentIdx = line.indexOf('--');
+    if (commentIdx >= 0) {
+      const code = line.slice(0, commentIdx).trimEnd();
+      const comment = line.slice(commentIdx + 2).trim();
 
-      if (code.length + 3 + comment.length <= wrapCol) {
-        out.push(code + '  -- ' + comment);
+      const totalLength = code.length + 3 + comment.length;
+
+      if (totalLength <= wrapCol) {
+        // Comment fits on one line
+        out.push(line);
       } else {
+        // Need to wrap the comment
+        const indent = ' '.repeat(commentIdx);
         const words = comment.split(' ');
-        let chunk = '';
+        let currentLine = '';
+        let isFirst = true;
+
         for (const word of words) {
-          if ((chunk + ' ' + word).length + code.length + 3 <= wrapCol) {
-            chunk += (chunk ? ' ' : '') + word;
+          const testLine = currentLine + (currentLine ? ' ' : '') + word;
+          const testLength = (isFirst ? code.length : indent.length) + 3 + testLine.length;
+
+          if (testLength <= wrapCol || currentLine === '') {
+            currentLine = testLine;
           } else {
-            out.push(code + '  -- ' + chunk);
-            chunk = word;
+            // Output current line and start new one
+            if (isFirst) {
+              out.push(code + ' '.repeat(Math.max(1, commentIdx - code.length)) + '-- ' + currentLine);
+              isFirst = false;
+            } else {
+              out.push(indent + '-- ' + currentLine);
+            }
+            currentLine = word;
           }
         }
-        if (chunk) out.push(code + '  -- ' + chunk);
+
+        // Output remaining text
+        if (currentLine) {
+          if (isFirst) {
+            out.push(code + ' '.repeat(Math.max(1, commentIdx - code.length)) + '-- ' + currentLine);
+          } else {
+            out.push(indent + '-- ' + currentLine);
+          }
+        }
       }
     } else {
       out.push(line);

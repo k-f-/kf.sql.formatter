@@ -1,31 +1,78 @@
 import { FormatterOptions } from '../formatter';
-import { splitStatementsCTESafe } from '../utils';
+import { lines, rejoin } from '../utils';
 
 export function semicolonsPass(text: string, opts: FormatterOptions): string {
-  const stmts = splitStatementsCTESafe(text);
+  const ls = lines(text);
+  const out: string[] = [];
 
-  if (stmts.length <= 1) {
-    return stmts[0].replace(/;\s*$/m, '').trimEnd();
-  }
+  // Tracking state
+  let inCTE = false;
+  let parenDepth = 0;
+  let currentStatement: string[] = [];
 
-  const normalized: string[] = [];
-  for (let i = 0; i < stmts.length; i++) {
-    let s = stmts[i].replace(/;\s*$/m, '').trimEnd();
-    if (i === 0) {
-      normalized.push(s);
-    } else {
-      const lines = s.split('\n');
-      let emitted = false;
-      for (let j = 0; j < lines.length; j++) {
-        const ln = lines[j];
-        if (!emitted && (!opts.semicolonSkipComments || !ln.trim().startsWith('--')) && ln.trim().length > 0) {
-          lines[j] = ';' + ln.trimStart();
-          emitted = true;
-        }
+  const flushStatement = (addSemicolon: boolean) => {
+    if (currentStatement.length === 0) return;
+
+    // Remove any existing semicolons from the statement
+    const cleanedStatement = currentStatement.map(line =>
+      line.replace(/;\s*$/, '')
+    );
+
+    out.push(...cleanedStatement);
+    currentStatement = [];
+  };
+
+  for (let i = 0; i < ls.length; i++) {
+    const line = ls[i];
+    const trimmed = line.trim();
+    const upper = trimmed.toUpperCase();
+
+    // Track parentheses depth
+    for (const char of line) {
+      if (char === '(') parenDepth++;
+      else if (char === ')') parenDepth--;
+    }
+
+    // Check for CTE start
+    if (parenDepth === 0 && /^WITH\b/i.test(trimmed)) {
+      if (currentStatement.length > 0) {
+        flushStatement(true);
+        // Add semicolon inline with WITH
+        out[out.length - 1] = out[out.length - 1] + '\n;';
       }
-      normalized.push(lines.join('\n'));
+      inCTE = true;
+    }
+
+    // Check for statement keywords that indicate a new statement
+    const isNewStatement = parenDepth === 0 && !inCTE &&
+      /^(SELECT|INSERT|UPDATE|DELETE|MERGE|CREATE|DROP|ALTER|TRUNCATE)\b/i.test(trimmed);
+
+    if (isNewStatement && currentStatement.length > 0) {
+      flushStatement(true);
+      // Add semicolon on the last line
+      out[out.length - 1] = out[out.length - 1] + '\n;';
+    }
+
+    // Add current line to statement
+    currentStatement.push(line);
+
+    // Check if we're ending a CTE (moving to main query)
+    if (inCTE && parenDepth === 0 && /^(SELECT|INSERT|UPDATE|DELETE|MERGE)\b/i.test(trimmed)) {
+      inCTE = false;
+    }
+
+    // Check for explicit semicolon
+    if (trimmed.endsWith(';')) {
+      flushStatement(false);
     }
   }
 
-  return normalized.join('\n');
+  // Flush any remaining statement
+  if (currentStatement.length > 0) {
+    flushStatement(false);
+    // Add final semicolon
+    out[out.length - 1] = out[out.length - 1] + '\n;';
+  }
+
+  return rejoin(out);
 }
