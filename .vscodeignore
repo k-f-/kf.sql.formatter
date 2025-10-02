@@ -1,6 +1,10 @@
 .vscode/
 node_modules/
-dist/
+src/
+tsconfig.json
 *.vsix
 *.zip
 *.log
+.git*
+.DS_Store
+scripts/
