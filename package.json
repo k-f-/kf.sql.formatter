@@ -14,13 +14,7 @@
   "homepage": "https://github.com/k-f-/kf.sql.formatter#readme",
   "engines": { "vscode": "^1.89.0" },
   "categories": [ "Formatters" ],
-  "activationEvents": [
-    "onLanguage:sql",
-    "onLanguage:hql",
-    "onLanguage:spark-sql",
-    "onCommand:databricksSqlFormatter.autoAliasAll",
-    "onCommand:databricksSqlFormatter.fixSemicolons"
-  ],
+  "activationEvents": [],
   "contributes": {
     "languages": [
       { "id": "sql", "aliases": ["SQL"], "extensions": [".sql", ".hql"], "configuration": "./syntaxes/language-configuration.json" },

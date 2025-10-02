@@ -85,7 +85,8 @@ npx vsce package
 
 ## ⚙️ Settings
 
-```{
+```json
+{
   "databricksSqlFormatter.keywordCase": "lower",
   "databricksSqlFormatter.functionCase": "lower",
   "databricksSqlFormatter.indent": 4,
@@ -107,7 +108,8 @@ npx vsce package
 
 ## 📁 Folder Structure
 
-```databricks-sql-formatter/
+```text
+databricks-sql-formatter/
 ├─ package.json
 ├─ tsconfig.json
 ├─ README.md
@@ -141,28 +143,28 @@ npx vsce package
 
 ## 🚀 Usage
 
-Open any .sql, .hql, or .spark.sql file
-Run Format Document (right-click or Shift+Alt+F)
-Optional commands:
-
-Databricks SQL: Auto-Alias Everything (Semantic)
-Databricks SQL: Normalize Semicolons
+1. Open any `.sql`, `.hql`, or `.spark.sql` file
+2. Run **Format Document** (right-click or `Shift+Alt+F`)
+3. Optional commands:
+   - **Databricks SQL: Auto-Alias Everything (Semantic)**
+   - **Databricks SQL: Normalize Semicolons**
 
 ## 🛠 Build Instructions
 
-```npm install
-run compile
+```bash
+npm install
+npm run compile
 npx vsce package
 ```
 
-## 📦 Installation
+## 📦 Installation from VSIX
 
-Open VS Code
-Go to Extensions → ... → Install from VSIX
-Select the .vsix file you built or downloaded
+1. Open VS Code
+2. Go to **Extensions** → **...** → **Install from VSIX**
+3. Select the `.vsix` file you built or downloaded
 
 ## 📁 File Types Supported
 
-.sql
-.hql
-.spark.sql
+- `.sql`
+- `.hql`
+- `.spark.sql`
