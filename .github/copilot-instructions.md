@@ -210,23 +210,164 @@ Avoid adding new dependencies unless absolutely necessary.
 ## Branch Strategy
 
 ### Branch Naming Conventions
+
 Use these prefixes for all branches:
+
 - `feature/*` - New features or enhancements (e.g., `feature/test-suite`)
 - `bugfix/*` - Bug fixes (e.g., `bugfix/alias-alignment-multiline`)
 - `refactor/*` - Code refactoring without behavior changes
 - `docs/*` - Documentation updates only
 - `test/*` - Test-related changes only
 
+### Commit Message Conventions
+
+**CRITICAL**: This project uses [Conventional Commits](https://www.conventionalcommits.org/) for automated changelog generation.
+
+#### Format
+
+```text
+<type>: <description>
+
+[optional body]
+```
+
+#### Required Types
+
+- `feat:` - ✨ New features (e.g., `feat: Add MERGE statement formatting`)
+- `fix:` - 🐛 Bug fixes (e.g., `fix: Prevent comment corruption with SQL keywords`)
+- `docs:` - 📝 Documentation (e.g., `docs: Update README with new examples`)
+- `test:` - 🧪 Testing (e.g., `test: Add idempotence tests for all examples`)
+- `ci:` - 🤖 CI/CD changes (e.g., `ci: Add automated release workflow`)
+- `refactor:` - ♻️ Code refactoring (e.g., `refactor: Extract comment parsing logic`)
+- `chore:` - 🔧 Maintenance (e.g., `chore: Bump version to 0.0.4`)
+- `perf:` - ⚡ Performance (e.g., `perf: Optimize regex patterns in lexer`)
+
+#### Atomic Commits - One Logical Change Per Commit
+
+**ALWAYS make commits atomic** - each commit should contain ONE logical change:
+
+✅ **Good (Atomic):**
+
+```bash
+git commit -m "fix: Correct semicolon placement for first statement"
+git commit -m "fix: Remove blank line after SELECT keyword"
+git commit -m "docs: Update CHANGELOG for v0.0.3"
+```
+
+❌ **Bad (Multiple changes):**
+
+```bash
+git commit -m "fix: Multiple formatter issues and update docs"
+```
+
+#### Benefits of Atomic Commits
+
+1. **Clean git history** - Easy to understand what changed and why
+2. **Easy rollback** - Revert specific changes without affecting others
+3. **Better code review** - Reviewers can understand each change independently
+4. **Automated changelog** - Each commit becomes a clear changelog entry
+5. **Easier debugging** - `git bisect` works better with focused commits
+
+#### Commit Guidelines
+
+1. **One logical change**: Fix one bug, add one feature, update one doc
+2. **Present tense**: "Add feature" not "Added feature"
+3. **Be specific**: "Fix alias alignment" not "Fix bug"
+4. **Imperative mood**: "Change" not "Changes" or "Changed"
+5. **No period at end**: `feat: Add feature` not `feat: Add feature.`
+6. **Reference issues**: `fix: Correct indentation (#42)` when applicable
+
+#### Examples
+
+```bash
+# Feature - one feature per commit
+git commit -m "feat: Add window function formatting support"
+git commit -m "feat: Implement QUALIFY clause handling"
+
+# Bug fix - one fix per commit
+git commit -m "fix: Prevent corruption of comments containing SELECT keyword"
+git commit -m "fix: Correct indentation for nested CASE expressions"
+
+# Documentation - one doc update per commit
+git commit -m "docs: Add troubleshooting section to README"
+git commit -m "docs: Update release checklist with new steps"
+
+# Refactoring - one refactor per commit
+git commit -m "refactor: Extract comment extraction to separate function"
+git commit -m "refactor: Simplify regex pattern in clause structure pass"
+
+# Testing - one test update per commit
+git commit -m "test: Add test cases for CTE formatting"
+git commit -m "test: Verify idempotence for all example files"
+
+# Multiple related changes - use body
+git commit -m "feat: Implement CASE expression breaking
+
+- Breaks long CASE expressions across lines
+- Aligns WHEN clauses consistently  
+- Preserves inline comments in CASE blocks"
+```
+
+#### When to Split Commits
+
+Split commits when you've made changes to:
+
+- ✅ Multiple formatter passes → Separate commit per pass
+- ✅ Code + documentation → Separate commits
+- ✅ Multiple bug fixes → Separate commit per bug
+- ✅ Multiple features → Separate commit per feature
+- ✅ Code + tests → Can be same commit if tightly coupled, otherwise split
+
+#### Automated Changelog Generation
+
+The release workflow automatically generates changelogs from commit messages:
+
+- Collects all commits since last tag
+- Groups by type (feat, fix, docs, etc.)
+- Formats with emojis and sections
+- Creates GitHub release notes
+
+**Example auto-generated changelog:**
+
+```markdown
+## What's Changed
+
+### ✨ Features
+- Add window function formatting support
+- Implement QUALIFY clause handling
+
+### 🐛 Bug Fixes
+- Prevent corruption of comments containing SELECT keyword
+- Correct indentation for nested CASE expressions
+
+### 📝 Documentation
+- Add troubleshooting section to README
+- Update release checklist with new steps
+```
+
+See `.github/COMMIT_CONVENTION.md` for complete guide.
+
 ### Workflow for New Features
+
 ```bash
 # Create feature branch from main
 git checkout main
 git pull origin main
 git checkout -b feature/<descriptive-name>
 
-# Work incrementally, commit often
-git add .
-git commit -m "feat: <description>"
+# Work incrementally with ATOMIC commits
+# Each commit = one logical change
+git add src/passes/06-new-feature.ts
+git commit -m "feat: Add new formatting pass for feature X"
+
+git add src/formatter.ts
+git commit -m "feat: Integrate new formatting pass into pipeline"
+
+git add examples/09-feature-test.sql
+git commit -m "test: Add example file for feature X"
+
+git add README.md
+git commit -m "docs: Document new feature X in README"
 
 # Push feature branch
 git push origin feature/<descriptive-name>
@@ -236,10 +377,37 @@ git checkout main
 git merge feature/<descriptive-name>
 git push origin main
 
-# Tag releases
-git tag -a v0.0.x -m "Release description"
-git push origin v0.0.x
+# Clean up branch
+git branch -d feature/<descriptive-name>
+git push origin --delete feature/<descriptive-name>
 ```
+
+### Release Process (Automated)
+
+```bash
+# 1. Update version files
+# Edit package.json: "version": "0.0.x"
+# Edit README.md: version badge and download link
+# Create RELEASE_NOTES_v0.0.x.md (optional)
+
+# 2. Commit version bump
+git add package.json README.md
+git commit -m "chore: Bump version to 0.0.x"
+git push origin main
+
+# 3. Tag release (triggers automated workflow)
+git tag -a v0.0.x -m "Release v0.0.x: Brief description"
+git push origin v0.0.x
+
+# The CI/CD workflow will automatically:
+# - Run all tests
+# - Verify version consistency
+# - Generate changelog from conventional commits
+# - Package extension
+# - Create GitHub release with VSIX
+```
+
+See `QUICK_RELEASE.md` and `RELEASE_CHECKLIST.md` for details.
 
 ### Development Branches
 - **`main`**: Production-ready code, tagged releases only
@@ -249,13 +417,48 @@ git push origin v0.0.x
 
 ## Contributing
 
-1. Create appropriate feature/bugfix branch
+1. Create appropriate feature/bugfix branch with proper naming convention
 2. Follow existing code patterns and style
 3. Keep changes focused and minimal
-4. **Test thoroughly** (see Testing section above)
-5. Update documentation for user-facing changes
-6. Ensure TypeScript compilation succeeds without errors
-7. Verify all examples still format correctly
+4. **Use atomic commits** - one logical change per commit
+5. **Use conventional commit messages** - `feat:`, `fix:`, `docs:`, etc.
+6. **Test thoroughly** (see Testing section above)
+7. Update documentation for user-facing changes
+8. Ensure TypeScript compilation succeeds without errors
+9. Verify all examples still format correctly
+10. Run `npm run lint:fix` to ensure markdown is properly formatted
+
+### Example Contribution Flow
+
+```bash
+# 1. Create feature branch
+git checkout -b feature/add-qualify-support
+
+# 2. Make changes with atomic commits
+git add src/passes/12-qualify.ts
+git commit -m "feat: Add QUALIFY clause formatting pass"
+
+git add src/formatter.ts
+git commit -m "feat: Integrate QUALIFY pass into formatter pipeline"
+
+git add examples/10-qualify-test.sql
+git commit -m "test: Add QUALIFY clause test examples"
+
+git add README.md projectSpec.md
+git commit -m "docs: Document QUALIFY clause support"
+
+# 3. Test everything
+npm run compile
+node test-examples-formatter.js
+
+# 4. Push and create PR (if applicable)
+git push origin feature/add-qualify-support
+
+# 5. After approval, merge to main
+git checkout main
+git merge feature/add-qualify-support
+git push origin main
+```
 
 ## Testing Workflow (MANDATORY)
 
