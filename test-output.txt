@@ -1,0 +1,12 @@
+=== INPUT ===
+
+SELECT id, name, email
+FROM users
+WHERE status = 'active'
+
+
+=== OUTPUT ===
+SELECT id, name, email FROM users WHERE status = 'active'
+;
+
+=== DONE ===

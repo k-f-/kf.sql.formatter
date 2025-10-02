@@ -44,12 +44,12 @@ Non-idempotent: 0
 ```
 * chore: Package v0.0.3 release with release notes
 *   Merge bugfix/formatter-core-issues
-|\  
+|\
 | * docs: Update CHANGELOG for v0.0.3 with all bug fixes
 | * test: Add comprehensive formatter tests with clean SQL examples
 | * fix: Extract and restore comments to prevent SQL keyword corruption
 | * fix: Four critical formatter bugs (semicolons, blanks, columns, alignment)
-|/  
+|/
 * (tag: v0.0.2) Previous release
 ```
 

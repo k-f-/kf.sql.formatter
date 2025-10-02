@@ -1,0 +1,228 @@
+================================================================================
+SQL FORMATTER TEST SUITE
+================================================================================
+
+
+================================================================================
+Testing: 01-simple-selects.sql
+================================================================================
+✅ SUCCESS
+   Input lines:     57
+   Formatted lines: 124
+   Idempotent:      ❌ NO
+   Output:          /Users/kef/Documents/Code/kf.sql.formatter/test-cases/formatted/01-simple-selects.sql
+
+   ⚠️  WARNING: Not idempotent! First 5 differences:
+   Line 3:
+     1st: "select  Statements"
+     2nd: "select   Statements"
+   Line 7:
+     1st: ";"
+     2nd: "(empty)"
+   Line 8:
+     1st: "select"
+     2nd: ";"
+   Line 9:
+     1st: "with few columns(should split"
+     2nd: "select"
+   Line 10:
+     1st: "with leading commas)"
+     2nd: "with few columns(should split"
+
+================================================================================
+Testing: 02-joins.sql
+================================================================================
+✅ SUCCESS
+   Input lines:     56
+   Formatted lines: 119
+   Idempotent:      ❌ NO
+   Output:          /Users/kef/Documents/Code/kf.sql.formatter/test-cases/formatted/02-joins.sql
+
+   ⚠️  WARNING: Not idempotent! First 5 differences:
+   Line 8:
+     1st: "select"
+     2nd: ";"
+   Line 9:
+     1st: "  u.user_id"
+     2nd: "select"
+   Line 10:
+     1st: "  ,u.name"
+     2nd: "  u.user_id"
+   Line 11:
+     1st: "  ,o.order_id"
+     2nd: "  ,u.name"
+   Line 12:
+     1st: "  ,o.order_date"
+     2nd: "  ,o.order_id"
+
+================================================================================
+Testing: 03-ctes-subqueries.sql
+================================================================================
+✅ SUCCESS
+   Input lines:     92
+   Formatted lines: 144
+   Idempotent:      ❌ NO
+   Output:          /Users/kef/Documents/Code/kf.sql.formatter/test-cases/formatted/03-ctes-subqueries.sql
+
+   ⚠️  WARNING: Not idempotent! First 5 differences:
+   Line 3:
+     1st: "              and Subqueries"
+     2nd: "  and Subqueries"
+   Line 15:
+     1st: "select  *"
+     2nd: ";"
+   Line 16:
+     1st: "from active_users"
+     2nd: "select   *"
+   Line 17:
+     1st: "order by name"
+     2nd: "from active_users"
+   Line 18:
+     1st: "with"
+     2nd: "order by name"
+
+================================================================================
+Testing: 04-complex-expressions.sql
+================================================================================
+✅ SUCCESS
+   Input lines:     98
+   Formatted lines: 115
+   Idempotent:      ❌ NO
+   Output:          /Users/kef/Documents/Code/kf.sql.formatter/test-cases/formatted/04-complex-expressions.sql
+
+   ⚠️  WARNING: Not idempotent! First 5 differences:
+   Line 9:
+     1st: "  ,salary,"
+     2nd: "  salary"
+   Line 14:
+     1st: "  END                                                                                                             as salary_category"
+     2nd: "  END                                                                                                                                                                           as salary_category"
+   Line 16:
+     1st: ";"
+     2nd: "(empty)"
+   Line 19:
+     1st: "with multiple conditions"
+     2nd: ";"
+   Line 20:
+     1st: "select"
+     2nd: "with multiple conditions"
+
+================================================================================
+Testing: 05-dml-operations.sql
+================================================================================
+✅ SUCCESS
+   Input lines:     69
+   Formatted lines: 101
+   Idempotent:      ❌ NO
+   Output:          /Users/kef/Documents/Code/kf.sql.formatter/test-cases/formatted/05-dml-operations.sql
+
+   ⚠️  WARNING: Not idempotent! First 5 differences:
+   Line 3:
+     1st: ",UPDATE,"
+     2nd: "  UPDATE"
+   Line 4:
+     1st: "DELETE"
+     2nd: ";"
+   Line 5:
+     1st: ",MERGE)"
+     2nd: "DELETE"
+   Line 6:
+     1st: "  -- ============================================================================="
+     2nd: "  ,MERGE)"
+   Line 7:
+     1st: "(empty)"
+     2nd: "  -- ============================================================================="
+
+================================================================================
+Testing: 06-spark-specific.sql
+================================================================================
+✅ SUCCESS
+   Input lines:     83
+   Formatted lines: 91
+   Idempotent:      ❌ NO
+   Output:          /Users/kef/Documents/Code/kf.sql.formatter/test-cases/formatted/06-spark-specific.sql
+
+   ⚠️  WARNING: Not idempotent! First 5 differences:
+   Line 14:
+     1st: "  )                                                                                                                             as user_info"
+     2nd: "  )                                                                                                                                                                                       as user_info"
+   Line 16:
+     1st: ";"
+     2nd: "(empty)"
+   Line 22:
+     1st: "'street'  , street, 'city', city, 'state', state)                                                                                as shipping_address"
+     2nd: "  'street'"
+   Line 23:
+     1st: "'street'  , billing_street, 'city', billing_city, 'state', billing_state)                                                        as billing_address"
+     2nd: "  ,street"
+   Line 24:
+     1st: "from orders"
+     2nd: "  ,'city'"
+
+================================================================================
+Testing: 07-comments-strings.sql
+================================================================================
+✅ SUCCESS
+   Input lines:     83
+   Formatted lines: 120
+   Idempotent:      ❌ NO
+   Output:          /Users/kef/Documents/Code/kf.sql.formatter/test-cases/formatted/07-comments-strings.sql
+
+   ⚠️  WARNING: Not idempotent! First 5 differences:
+   Line 3:
+     1st: "              and String Handling"
+     2nd: "  and String Handling"
+   Line 7:
+     1st: "select"
+     2nd: ";"
+   Line 8:
+     1st: "  user_id"
+     2nd: "select"
+   Line 9:
+     1st: "  ,-- Unique identifier"
+     2nd: "  user_id"
+   Line 10:
+     1st: "  name,                                                                                                                                                                                                                                                                                                                                                            -- full name of user"
+     2nd: "  ,-- Unique identifier"
+
+================================================================================
+Testing: 08-edge-cases.sql
+================================================================================
+✅ SUCCESS
+   Input lines:     98
+   Formatted lines: 204
+   Idempotent:      ❌ NO
+   Output:          /Users/kef/Documents/Code/kf.sql.formatter/test-cases/formatted/08-edge-cases.sql
+
+   ⚠️  WARNING: Not idempotent! First 5 differences:
+   Line 3:
+     1st: "              and Stress Tests"
+     2nd: "  and Stress Tests"
+   Line 7:
+     1st: "select"
+     2nd: ";"
+   Line 8:
+     1st: "  a"
+     2nd: "select"
+   Line 9:
+     1st: "  ,b"
+     2nd: "  a"
+   Line 10:
+     1st: "  ,c"
+     2nd: "  ,b"
+
+
+================================================================================
+FINAL SUMMARY
+================================================================================
+Total files:       8
+Successful:        8 ✅
+Failed:            0 
+Idempotent:        0 ✅
+Non-idempotent:    8 ⚠️
+
+⚠️  All tests passed but some are not idempotent.
+
+📊 Detailed results saved to: /Users/kef/Documents/Code/kf.sql.formatter/test-results.json
+
+================================================================================

@@ -1,0 +1,65 @@
+{
+  "totalFiles": 8,
+  "successful": 8,
+  "failed": 0,
+  "idempotent": 0,
+  "nonIdempotent": 8,
+  "details": [
+    {
+      "filename": "01-simple-selects.sql",
+      "success": true,
+      "inputLines": 111,
+      "formattedLines": 116,
+      "idempotent": false
+    },
+    {
+      "filename": "02-joins.sql",
+      "success": true,
+      "inputLines": 107,
+      "formattedLines": 127,
+      "idempotent": false
+    },
+    {
+      "filename": "03-ctes-subqueries.sql",
+      "success": true,
+      "inputLines": 136,
+      "formattedLines": 156,
+      "idempotent": false
+    },
+    {
+      "filename": "04-complex-expressions.sql",
+      "success": true,
+      "inputLines": 127,
+      "formattedLines": 122,
+      "idempotent": false
+    },
+    {
+      "filename": "05-dml-operations.sql",
+      "success": true,
+      "inputLines": 116,
+      "formattedLines": 104,
+      "idempotent": false
+    },
+    {
+      "filename": "06-spark-specific.sql",
+      "success": true,
+      "inputLines": 101,
+      "formattedLines": 102,
+      "idempotent": false
+    },
+    {
+      "filename": "07-comments-strings.sql",
+      "success": true,
+      "inputLines": 123,
+      "formattedLines": 111,
+      "idempotent": false
+    },
+    {
+      "filename": "08-edge-cases.sql",
+      "success": true,
+      "inputLines": 161,
+      "formattedLines": 183,
+      "idempotent": false
+    }
+  ]
+}

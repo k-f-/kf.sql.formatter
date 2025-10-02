@@ -2,7 +2,7 @@
   "name": "kf-sql-formatter",
   "displayName": "KF SQL Formatter (Databricks/Spark)",
   "description": "SQL formatter for Databricks/Spark SQL matching your org's conventions.",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "publisher": "kef",
   "repository": {
     "type": "git",
