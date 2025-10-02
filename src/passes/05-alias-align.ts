@@ -30,11 +30,18 @@ export function aliasAlignPass(text: string, opts: FormatterOptions): string {
     }
   }
 
-  // Scan all lines to find the true max width (including non-alias lines)
+  // Scan all lines to find the true max width (excluding standalone comment lines)
   for (const line of ls) {
-    const trimmedLine = line.trimEnd();
-    if (trimmedLine.length > 0) {
-      globalMaxWidth = Math.max(globalMaxWidth, trimmedLine.length);
+    const trimmedLine = line.trim();
+
+    // Skip standalone comment lines - they shouldn't affect alignment
+    if (trimmedLine.startsWith('--')) {
+      continue;
+    }
+
+    const trimmedEndLine = line.trimEnd();
+    if (trimmedEndLine.length > 0) {
+      globalMaxWidth = Math.max(globalMaxWidth, trimmedEndLine.length);
     }
   }
 
@@ -49,8 +56,15 @@ export function aliasAlignPass(text: string, opts: FormatterOptions): string {
     const asMatch = /\s+as\s+\S+/i.exec(line);
 
     if (!asMatch) {
-      // Handle comment-only lines that need alignment
-      const commentMatch = /^(\s*)(.+?)(\s*)(--\s*.*)$/.exec(line);
+      // Skip standalone comment lines (lines that only contain comments)
+      const trimmedLine = line.trim();
+      if (trimmedLine.startsWith('--')) {
+        out.push(line);
+        continue;
+      }
+
+      // Handle inline comments (comments after code) that need alignment
+      const commentMatch = /^(\s*)(.+?)(\s+)(--\s*.*)$/.exec(line);
       if (commentMatch && !line.includes(' as ')) {
         const [, indent, content, , comment] = commentMatch;
         const contentLength = (indent + content).length;

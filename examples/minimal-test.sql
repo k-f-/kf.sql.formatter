@@ -1,0 +1,1 @@
+-- Simple test select id, name from users where status = 'active'
