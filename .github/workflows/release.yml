@@ -11,7 +11,7 @@ permissions:
 jobs:
   release:
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -86,22 +86,99 @@ jobs:
         run: |
           NOTES_FILE="RELEASE_NOTES_${{ steps.get_version.outputs.TAG }}.md"
           if [ -f "$NOTES_FILE" ]; then
+            echo "✅ Using custom release notes: $NOTES_FILE"
             echo "NOTES_FILE=$NOTES_FILE" >> $GITHUB_ENV
             echo "HAS_NOTES=true" >> $GITHUB_OUTPUT
           else
-            echo "⚠️  No release notes file found: $NOTES_FILE"
+            echo "⚠️  No custom release notes found, will generate from commits"
             echo "HAS_NOTES=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Generate release description
+        id: generate_notes
+        run: |
+          # Get previous tag
+          PREV_TAG=$(git tag --sort=-v:refname | grep -A1 "${{ steps.get_version.outputs.TAG }}" | tail -1)
+          
+          if [ -z "$PREV_TAG" ]; then
+            echo "First release - using all commits"
+            COMMIT_RANGE="HEAD"
+          else
+            echo "Previous tag: $PREV_TAG"
+            COMMIT_RANGE="$PREV_TAG..${{ steps.get_version.outputs.TAG }}"
+          fi
+          
+          # Generate changelog from commits
+          echo "## What's Changed" > /tmp/auto-release-notes.md
+          echo "" >> /tmp/auto-release-notes.md
+          
+          # Group commits by type
+          git log $COMMIT_RANGE --pretty=format:"%s" | while read commit; do
+            case "$commit" in
+              feat:*|feature:*)
+                echo "- ✨ ${commit#*: }" >> /tmp/features.txt
+                ;;
+              fix:*|bugfix:*)
+                echo "- 🐛 ${commit#*: }" >> /tmp/fixes.txt
+                ;;
+              docs:*)
+                echo "- 📝 ${commit#*: }" >> /tmp/docs.txt
+                ;;
+              chore:*)
+                echo "- 🔧 ${commit#*: }" >> /tmp/chore.txt
+                ;;
+              test:*)
+                echo "- 🧪 ${commit#*: }" >> /tmp/tests.txt
+                ;;
+              ci:*)
+                echo "- 🤖 ${commit#*: }" >> /tmp/ci.txt
+                ;;
+              refactor:*)
+                echo "- ♻️ ${commit#*: }" >> /tmp/refactor.txt
+                ;;
+              *)
+                echo "- ${commit}" >> /tmp/other.txt
+                ;;
+            esac
+          done
+          
+          # Assemble changelog
+          [ -f /tmp/features.txt ] && echo "### ✨ Features" >> /tmp/auto-release-notes.md && cat /tmp/features.txt >> /tmp/auto-release-notes.md && echo "" >> /tmp/auto-release-notes.md
+          [ -f /tmp/fixes.txt ] && echo "### 🐛 Bug Fixes" >> /tmp/auto-release-notes.md && cat /tmp/fixes.txt >> /tmp/auto-release-notes.md && echo "" >> /tmp/auto-release-notes.md
+          [ -f /tmp/docs.txt ] && echo "### 📝 Documentation" >> /tmp/auto-release-notes.md && cat /tmp/docs.txt >> /tmp/auto-release-notes.md && echo "" >> /tmp/auto-release-notes.md
+          [ -f /tmp/tests.txt ] && echo "### 🧪 Testing" >> /tmp/auto-release-notes.md && cat /tmp/tests.txt >> /tmp/auto-release-notes.md && echo "" >> /tmp/auto-release-notes.md
+          [ -f /tmp/ci.txt ] && echo "### 🤖 CI/CD" >> /tmp/auto-release-notes.md && cat /tmp/ci.txt >> /tmp/auto-release-notes.md && echo "" >> /tmp/auto-release-notes.md
+          [ -f /tmp/refactor.txt ] && echo "### ♻️ Refactoring" >> /tmp/auto-release-notes.md && cat /tmp/refactor.txt >> /tmp/auto-release-notes.md && echo "" >> /tmp/auto-release-notes.md
+          [ -f /tmp/chore.txt ] && echo "### 🔧 Maintenance" >> /tmp/auto-release-notes.md && cat /tmp/chore.txt >> /tmp/auto-release-notes.md && echo "" >> /tmp/auto-release-notes.md
+          [ -f /tmp/other.txt ] && echo "### Other Changes" >> /tmp/auto-release-notes.md && cat /tmp/other.txt >> /tmp/auto-release-notes.md && echo "" >> /tmp/auto-release-notes.md
+          
+          # Add installation instructions
+          echo "## 📦 Installation" >> /tmp/auto-release-notes.md
+          echo "" >> /tmp/auto-release-notes.md
+          echo '```bash' >> /tmp/auto-release-notes.md
+          echo "code --install-extension kf-sql-formatter-${{ steps.get_version.outputs.VERSION }}.vsix" >> /tmp/auto-release-notes.md
+          echo '```' >> /tmp/auto-release-notes.md
+          
+          cat /tmp/auto-release-notes.md
+          echo "AUTO_NOTES_FILE=/tmp/auto-release-notes.md" >> $GITHUB_ENV
+
+      - name: Determine release body
+        id: release_body
+        run: |
+          if [ "${{ steps.check_notes.outputs.HAS_NOTES }}" = "true" ]; then
+            echo "BODY_FILE=${{ env.NOTES_FILE }}" >> $GITHUB_ENV
+          else
+            echo "BODY_FILE=${{ env.AUTO_NOTES_FILE }}" >> $GITHUB_ENV
           fi
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v1
         with:
-          name: ${{ steps.get_version.outputs.TAG }} - Release
-          body_path: ${{ env.NOTES_FILE }}
+          name: ${{ steps.get_version.outputs.TAG }}
+          body_path: ${{ env.BODY_FILE }}
           files: ${{ env.VSIX_FILE }}
           draft: false
           prerelease: false
-          generate_release_notes: ${{ steps.check_notes.outputs.HAS_NOTES == 'false' }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -109,5 +186,5 @@ jobs:
         run: |
           echo "🎉 Release ${{ steps.get_version.outputs.TAG }} completed successfully!"
           echo "📦 VSIX: ${{ env.VSIX_FILE }}"
-          echo "📄 Notes: ${{ env.NOTES_FILE }}"
+          echo "📄 Release notes: ${{ env.BODY_FILE }}"
           echo "🔗 https://github.com/${{ github.repository }}/releases/tag/${{ steps.get_version.outputs.TAG }}"
