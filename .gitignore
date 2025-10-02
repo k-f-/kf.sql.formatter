@@ -1,0 +1,15 @@
+# Node modules
+node_modules/
+
+# Build output
+dist/
+
+# NPM
+package-lock.json
+
+# VSCode
+.vscode/
+
+# OS files
+.DS_Store
+Thumbs.db
