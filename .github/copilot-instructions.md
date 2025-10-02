@@ -97,23 +97,33 @@ npm run lint:fix   # Auto-fix markdown linting errors
 
 **When creating or editing Markdown files**:
 
-1. **Always run the linter** after creating/editing:
+1. **Automatic linting on commit**:
+   - Pre-commit hook runs `markdownlint --fix` automatically
+   - Fixes are staged and included in your commit
+   - No manual intervention needed
+
+2. **Manual linting** (optional):
 
    ```bash
-   npm run lint:fix
+   npm run lint:fix  # Auto-fix issues
+   npm run lint      # Check for remaining errors
    ```
 
-2. **Linter configuration**: `.markdownlint.json`
-3. **What gets fixed automatically**:
+3. **Linter configuration**: `.markdownlint.json`
+
+4. **What gets fixed automatically**:
    - Blank lines around headings
    - Blank lines around lists and code blocks
    - Trailing spaces
    - List indentation
    - Consistent heading styles
 
-4. **Commit clean markdown**:
-   - Run `npm run lint:fix` before committing
-   - Verify with `npm run lint` (should show no errors)
+5. **Pre-commit hook troubleshooting**:
+   - If hook doesn't run: `chmod +x .husky/pre-commit`
+   - Test manually: `npx lint-staged`
+   - See `MARKDOWN_LINTING.md` for detailed troubleshooting
+
+**Note**: The pre-commit hook ensures all committed markdown is properly formatted without manual effort.
 
 ### File Organization
 

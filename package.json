@@ -130,11 +130,20 @@
     "watch": "tsc -w -p ./",
     "package": "vsce package",
     "lint": "markdownlint '**/*.md' --ignore node_modules --ignore dist",
-    "lint:fix": "markdownlint '**/*.md' --ignore node_modules --ignore dist --fix"
+    "lint:fix": "markdownlint '**/*.md' --ignore node_modules --ignore dist --fix",
+    "prepare": "husky"
+  },
+  "lint-staged": {
+    "*.md": [
+      "markdownlint --fix",
+      "git add"
+    ]
   },
   "devDependencies": {
     "@types/node": "^20.11.30",
     "@vscode/vsce": "^2.24.0",
+    "husky": "^9.0.11",
+    "lint-staged": "^15.2.2",
     "markdownlint-cli": "^0.39.0",
     "typescript": "^5.5.4",
     "vscode": "^1.1.37"

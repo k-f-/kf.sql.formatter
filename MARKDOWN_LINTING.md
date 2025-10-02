@@ -2,21 +2,41 @@
 
 This project uses `markdownlint-cli` to ensure consistent, high-quality markdown documentation.
 
+## 🤖 Automatic Linting (NEW!)
+
+**Markdown files are now automatically linted on commit!**
+
+When you commit markdown files, a Git pre-commit hook automatically:
+
+1. Runs `markdownlint --fix` on all staged `.md` files
+2. Auto-fixes common formatting issues
+3. Adds the fixed files back to the commit
+
+**You don't need to manually run `npm run lint:fix` anymore!**
+
+Just commit normally:
+
+```bash
+git add README.md
+git commit -m "docs: update readme"
+# ✅ Hook automatically fixes and re-stages README.md
+```
+
 ## Quick Commands
 
 ```bash
 # Check all markdown files for linting errors
 npm run lint
 
-# Auto-fix markdown linting errors
+# Manually auto-fix markdown linting errors (if needed)
 npm run lint:fix
 ```
 
-## When to Use
+## When to Use Manual Commands
 
-### Before Committing
+### Before Committing (Optional)
 
-**ALWAYS** run before committing markdown files:
+The pre-commit hook handles this automatically, but you can still run manually:
 
 ```bash
 npm run lint:fix
@@ -24,9 +44,9 @@ git add .
 git commit -m "docs: your message"
 ```
 
-### After Creating New Files
+### After Creating New Files (Optional)
 
-Whenever you create:
+The pre-commit hook will handle it, but you can preview fixes:
 
 - `README.md`
 - `CHANGELOG.md`
@@ -34,7 +54,49 @@ Whenever you create:
 - `RELEASE_NOTES_*.md`
 - Any other `.md` file
 
-Run `npm run lint:fix` to clean it up automatically.
+The pre-commit hook will automatically fix them when you commit!
+
+## How Automatic Linting Works
+
+### Git Pre-Commit Hook
+
+Uses `husky` and `lint-staged` to run markdownlint automatically:
+
+1. **You stage markdown files**: `git add README.md`
+2. **You commit**: `git commit -m "docs: update"`
+3. **Hook runs automatically**:
+   - Detects staged `.md` files
+   - Runs `markdownlint --fix` on them
+   - Auto-fixes formatting issues
+   - Re-stages the fixed files
+   - Continues with the commit
+
+### Configuration
+
+**`.husky/pre-commit`**:
+
+```bash
+#!/usr/bin/env sh
+npx lint-staged
+```
+
+**`package.json` - `lint-staged` section**:
+
+```json
+"lint-staged": {
+  "*.md": [
+    "markdownlint --fix",
+    "git add"
+  ]
+}
+```
+
+This ensures:
+
+- ✅ All committed markdown is properly formatted
+- ✅ No manual intervention needed
+- ✅ Consistent formatting across all contributors
+- ✅ Clean git history without formatting-only commits
 
 ## What Gets Fixed
 
@@ -207,6 +269,74 @@ Some errors require manual fixes. Run `npm run lint` to see remaining issues.
 ### Want Stricter Rules
 
 Edit `.markdownlint.json` to enable more rules or adjust settings.
+
+### Pre-Commit Hook Not Running
+
+**Check if hook is executable**:
+
+```bash
+ls -la .husky/pre-commit
+# Should show -rwxr-xr-x (executable)
+```
+
+**Make executable if needed**:
+
+```bash
+chmod +x .husky/pre-commit
+```
+
+**Verify husky is installed**:
+
+```bash
+npm install
+```
+
+**Check package.json has prepare script**:
+
+```json
+"scripts": {
+  "prepare": "husky"
+}
+```
+
+**Test the hook manually**:
+
+```bash
+# Stage a markdown file with errors
+echo "# Test" > test.md
+git add test.md
+
+# Run lint-staged manually
+npx lint-staged
+
+# Check if file was fixed
+cat test.md
+```
+
+### Hook Runs But Doesn't Fix Files
+
+**Check lint-staged configuration in package.json**:
+
+```json
+"lint-staged": {
+  "*.md": [
+    "markdownlint --fix",
+    "git add"
+  ]
+}
+```
+
+**Ensure markdownlint is installed**:
+
+```bash
+npm install --save-dev markdownlint-cli
+```
+
+**Run manually to see errors**:
+
+```bash
+npx markdownlint --fix *.md
+```
 
 ## Best Practices
 

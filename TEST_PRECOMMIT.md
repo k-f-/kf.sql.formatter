@@ -8,7 +8,7 @@ No blank line after this list.
 ```bash
 echo "no blank lines around this code block"
 ```
-Another paragraph with trailing spaces.   
+Another paragraph with trailing spaces.
 
 ## Final Section
 Testing complete.
