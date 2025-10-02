@@ -33,6 +33,16 @@ jobs:
     - name: Compile TypeScript
       run: npm run compile
 
+    - name: Verify compilation output
+      run: |
+        echo "Checking for dist/extension.js..."
+        ls -la dist/
+        if [ ! -f "dist/extension.js" ]; then
+          echo "ERROR: dist/extension.js not found!"
+          exit 1
+        fi
+        echo "✓ Compilation successful"
+
     - name: Install vsce
       run: npm install -g @vscode/vsce
 
@@ -47,6 +57,14 @@ jobs:
         fi
         echo "PACKAGE_NAME=$PACKAGE_NAME" >> $GITHUB_OUTPUT
         echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
+
+    - name: Debug - Show package.json main field
+      run: |
+        echo "Main entry point from package.json:"
+        node -p "require('./package.json').main"
+        echo "Checking if file exists:"
+        FILE_PATH=$(node -p "require('./package.json').main")
+        ls -la "$FILE_PATH" || echo "File not found: $FILE_PATH"
 
     - name: Package extension
       run: vsce package
