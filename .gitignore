@@ -16,17 +16,9 @@ node_modules/
 .DS_Store
 Thumbs.db
 
-# Node modules
-node_modules/
-
-# Build output
-dist/
+# Test outputs (legacy)
+tests/legacy/*.txt
+tests/legacy/*.json
 
 # NPM
 package-lock.json
-
-# VSCode
-.vscode/
-
-
-
