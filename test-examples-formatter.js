@@ -84,7 +84,7 @@ console.log('='.repeat(80));
 console.log(`Total files tested: ${totalTests}`);
 console.log(`Successful formats: ${passedTests}`);
 console.log(`Idempotent: ${idempotentTests}`);
-console.log(`Non-idempotent: ${totalTests - idempotentTests}`);
+console.log(`Non-idempotent: ${passedTests - idempotentTests}`);
 console.log('='.repeat(80));
 
 if (idempotentTests === totalTests && totalTests > 0) {
