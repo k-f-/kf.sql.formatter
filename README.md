@@ -13,6 +13,7 @@ A VS Code formatter for Databricks/Spark SQL that enforces your organization's f
 **[⬇️ Download Latest Release (v0.0.1)](https://github.com/k-f-/kf.sql.formatter/releases/download/v0.0.1/databricks-sql-formatter-0.0.1.vsix)**
 
 After downloading:
+
 1. Open VS Code
 2. Press `Ctrl+Shift+P` (Windows/Linux) or `Cmd+Shift+P` (Mac)
 3. Type "Extensions: Install from VSIX..."
