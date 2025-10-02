@@ -1,276 +1,390 @@
--- =============================================================================
--- 06-dml-ddl.sql
--- Data Manipulation Language (INSERT, UPDATE, DELETE, MERGE) and
--- Data Definition Language (CREATE, ALTER, DROP)
--- =============================================================================
+                                                                                                                                                                                  -- =============================================================================
+                                                                                                                                                                                  -- 06-dml-ddl.sql
+                                                                                                                                                                                  -- Data Manipulation language(INSERT
+,update,
+delete
+,merge) and
+                                                                                                                                                                                  -- Data Definition language(create, ALTER, DROP)
+                                                                                                                                                                                  -- =============================================================================
 
--- Simple INSERT
-INSERT INTO customers (customer_id, name, email)
-VALUES (1, 'John Doe', 'john@example.com');
+                                                                                                                                                                                  -- Simple INSERT
+;
+insert into customers(customer_id, name, email)
+  values(1, 'John Doe', 'john@example.com')
 
--- INSERT multiple rows
-INSERT INTO customers (customer_id, name, email)
-VALUES 
-    (1, 'John Doe', 'john@example.com'),
-    (2, 'Jane Smith', 'jane@example.com'),
-    (3, 'Bob Johnson', 'bob@example.com');
+                                                                                                                                                                                  -- INSERT multiple rows
+;
+insert into customers(customer_id, name, email)
+  values(1, 'John Doe', 'john@example.com')
+  ,(2, 'Jane Smith', 'jane@example.com'),
+  (3, 'Bob Johnson', 'bob@example.com')
 
--- INSERT from SELECT
-INSERT INTO customer_summary
-SELECT 
-    customer_id,
-    COUNT(*) as order_count,
-    SUM(order_total) as lifetime_value
-FROM orders
-GROUP BY customer_id;
+                                                                                                                                                                                  -- INSERT
+from
+;
+select
+;
+insert into customer_summary
+;
+select
 
--- INSERT OVERWRITE (Spark/Hive)
+  customer_id
+  ,count(*)                                                                                                                                                                       as order_count,
+  sum(order_total)                                                                                                                                                                as lifetime_value
+from orders
+group by customer_id
 INSERT OVERWRITE TABLE target_table
-SELECT * FROM source_table
-WHERE date >= '2024-01-01';
+;
+select
+  *
+from source_table
+where date >= '2024-01-01'
 
--- INSERT with partition (Spark/Hive)
-INSERT INTO TABLE sales PARTITION (year=2024, month=1)
-SELECT sale_id, product_id, amount, sale_date
-FROM raw_sales
-WHERE YEAR(sale_date) = 2024 AND MONTH(sale_date) = 1;
+                                                                                                                                                                                  -- INSERT
+;
+with partition(Spark/Hive)
+insert into TABLE sales partition(year=2024, month=1)
+;
+select
+  sale_id, product_id, amount, sale_date
+from raw_sales
+where year(sale_date) = 2024 and month(sale_date) = 1
 
--- Simple UPDATE
-UPDATE customers
-SET status = 'inactive'
-WHERE last_purchase_date < '2023-01-01';
+                                                                                                                                                                                  -- Simple
+;
+update
+;
+update customers
+  SET status = 'inactive'
+where last_purchase_date < '2023-01-01'
 
--- UPDATE with multiple columns
-UPDATE employees
-SET 
-    salary = salary * 1.05,
-    last_review_date = CURRENT_DATE,
-    reviewer_id = 101
-WHERE department = 'Engineering'
-  AND performance_rating >= 4;
+                                                                                                                                                                                  --
+;
+update
+;
+with multiple columns
+update employees
+  SET
+  ,last_review_date = CURRENT_DATE,
+where department = 'Engineering'
+  and performance_rating >= 4
 
--- UPDATE with CASE
-UPDATE products
-SET price = CASE 
-    WHEN category = 'Electronics' THEN price * 1.10
-    WHEN category = 'Clothing' THEN price * 1.05
-    ELSE price
-END
-WHERE last_price_update < '2024-01-01';
+                                                                                                                                                                                  --
+;
+update
+;
+with CASE
+update products
+  SET price = CASE
+  WHEN category = 'Electronics' THEN price * 1.10
+  WHEN category = 'Clothing' THEN price * 1.05
+  ELSE price
+  END
+where last_price_update < '2024-01-01'
 
--- UPDATE with subquery
-UPDATE employees
-SET salary = (
-    SELECT AVG(salary)
-    FROM employees e2
-    WHERE e2.department = employees.department
-)
-WHERE salary IS NULL;
+                                                                                                                                                                                  --
+;
+update
+;
+with subquery
+update employees
+  SET salary = (
+select
+  avg(salary)
+from employees e2
+where e2.department = employees.department
+  )
+where salary IS NULL
 
--- UPDATE with JOIN (some SQL dialects)
-UPDATE employees e
-SET e.manager_name = m.name
-FROM employees e
-JOIN employees m ON e.manager_id = m.employee_id;
+                                                                                                                                                                                  --
+;
+update
+;
+with
+join(some SQL dialects)
+update employees e
+  SET e.manager_name = m.name
+from employees e
+join employees m
+on e.manager_id = m.employee_id
 
--- Simple DELETE
-DELETE FROM customers
-WHERE status = 'deleted';
+                                                                                                                                                                                  -- Simple
+;
+delete
+;
+delete
+from customers
+where status = 'deleted'
 
--- DELETE with complex WHERE
-DELETE FROM orders
-WHERE order_date < DATE_SUB(CURRENT_DATE, 365)
-  AND status IN ('cancelled', 'returned')
-  AND customer_id NOT IN (SELECT customer_id FROM vip_customers);
+                                                                                                                                                                                  --
+;
+delete
+;
+with complex
+where
+delete
+from orders
+where order_date < date_sub(CURRENT_DATE, 365)
+  and status in('cancelled', 'returned')
+  and customer_id NOT in(
+select
+  customer_id
+from vip_customers)
 
--- DELETE with subquery
-DELETE FROM products
-WHERE product_id NOT IN (
-    SELECT DISTINCT product_id
-    FROM order_items
-    WHERE order_date >= '2023-01-01'
-);
+                                                                                                                                                                                  --
+;
+delete
+;
+with subquery
+delete
+from products
+where product_id NOT in(
+select
+  distinct
+  product_id
+from order_items
+where order_date >= '2023-01-01'
+  )
 
--- MERGE statement (Spark 3.0+, Delta Lake)
-MERGE INTO target_customers t
-USING source_customers s
-ON t.customer_id = s.customer_id
-WHEN MATCHED THEN
-    UPDATE SET 
-        t.name = s.name,
-        t.email = s.email,
-        t.updated_at = CURRENT_TIMESTAMP
-WHEN NOT MATCHED THEN
-    INSERT (customer_id, name, email, created_at)
-    VALUES (s.customer_id, s.name, s.email, CURRENT_TIMESTAMP);
+                                                                                                                                                                                  --
+;
+merge statement(Spark 3.0+, Delta Lake)
+;
+merge into target_customers t
+using source_customers s
+on t.customer_id = s.customer_id
+  WHEN MATCHED THEN
+;
+update SET
+  t.name       = s.name
+  ,t.email     = s.email,
+  t.updated_at  = CURRENT_TIMESTAMP
+  WHEN NOT MATCHED THEN
+;
+insert(customer_id, name, email, created_at)
+  values(s.customer_id, s.name, s.email, CURRENT_TIMESTAMP)
 
--- MERGE with complex conditions
-MERGE INTO inventory i
-USING (
-    SELECT 
-        product_id,
-        SUM(quantity) as total_quantity
-    FROM daily_shipments
-    WHERE shipment_date = CURRENT_DATE
-    GROUP BY product_id
-) s
-ON i.product_id = s.product_id
-WHEN MATCHED AND s.total_quantity > 0 THEN
-    UPDATE SET 
-        i.quantity = i.quantity + s.total_quantity,
-        i.last_updated = CURRENT_TIMESTAMP
-WHEN MATCHED AND s.total_quantity < 0 THEN
-    UPDATE SET 
-        i.quantity = i.quantity + s.total_quantity,
-        i.last_updated = CURRENT_TIMESTAMP,
-        i.needs_reorder = CASE WHEN i.quantity + s.total_quantity < i.reorder_point THEN TRUE ELSE FALSE END
-WHEN NOT MATCHED THEN
-    INSERT (product_id, quantity, last_updated)
-    VALUES (s.product_id, s.total_quantity, CURRENT_TIMESTAMP);
+                                                                                                                                                                                  --
+;
+merge
+;
+with complex conditions
+merge into inventory i
+using(
+select
 
--- MERGE with DELETE
-MERGE INTO customers t
-USING customer_updates s
-ON t.customer_id = s.customer_id
-WHEN MATCHED AND s.is_deleted = TRUE THEN
-    DELETE
-WHEN MATCHED THEN
-    UPDATE SET 
-        t.name = s.name,
-        t.status = s.status
-WHEN NOT MATCHED THEN
-    INSERT (customer_id, name, status)
-    VALUES (s.customer_id, s.name, s.status);
+  product_id
+  ,sum(quantity)                                                                                                                                                                  as total_quantity
+from daily_shipments
+where shipment_date = CURRENT_DATE
+group by product_id
+update SET
+  i.quantity      = i.quantity + s.total_quantity
+  ,i.last_updated  = CURRENT_TIMESTAMP
+  WHEN MATCHED and s.total_quantity < 0 THEN
+update SET
+  i.quantity      = i.quantity + s.total_quantity
+  ,i.last_updated  = CURRENT_TIMESTAMP,
+  i.needs_reorder  = CASE
+         WHEN i.quantity + s.total_quantity < i.reorder_point THEN TRUE
+         ELSE FALSE
+       END
+  WHEN NOT MATCHED THEN
+insert(product_id, quantity, last_updated)
+  values(s.product_id, s.total_quantity, CURRENT_TIMESTAMP)
 
--- CREATE TABLE
-CREATE TABLE customers (
-    customer_id INT,
-    name STRING,
-    email STRING,
-    created_at TIMESTAMP,
-    status STRING
-);
+                                                                                                                                                                                  --
+merge
+with
+delete
+merge into customers t
+using customer_updates s
+on t.customer_id = s.customer_id
+  WHEN MATCHED and s.is_deleted = TRUE THEN
+delete
+  WHEN MATCHED THEN
+update SET
+  t.name    = s.name
+  ,t.status  = s.status
+  WHEN NOT MATCHED THEN
+insert(customer_id, name, status)
+  values(s.customer_id, s.name, s.status)
 
--- CREATE TABLE with constraints
-CREATE TABLE orders (
-    order_id BIGINT PRIMARY KEY,
-    customer_id INT NOT NULL,
-    order_date DATE NOT NULL,
-    order_total DECIMAL(10, 2),
-    status STRING DEFAULT 'pending',
-    FOREIGN KEY (customer_id) REFERENCES customers(customer_id)
-);
+                                                                                                                                                                                  --
+create TABLE
+create TABLE customers(
+  customer_id INT
+  ,name STRING,
+  email STRING
+,created_at TIMESTAMP,
+  status STRING
+  )
 
--- CREATE TABLE AS SELECT (CTAS)
-CREATE TABLE high_value_customers AS
-SELECT 
-    customer_id,
-    name,
-    email,
-    SUM(order_total) as lifetime_value
-FROM customers c
-JOIN orders o ON c.customer_id = o.customer_id
-GROUP BY customer_id, name, email
-HAVING SUM(order_total) > 10000;
+                                                                                                                                                                                  --
+create TABLE
+with constraints
+create TABLE orders(
+  order_id BIGINT PRIMARY KEY
+  ,customer_id INT NOT NULL,
+  order_date DATE NOT NULL
+  ,order_total decimal(10, 2),
+  status STRING DEFAULT 'pending'
+  ,FOREIGN key(customer_id) REFERENCES customers(customer_id)
+  )
 
--- CREATE TABLE with partitioning (Spark/Hive)
-CREATE TABLE sales (
-    sale_id BIGINT,
-    product_id INT,
-    amount DECIMAL(10, 2),
-    sale_date DATE
-)
-PARTITIONED BY (year INT, month INT);
+                                                                                                                                                                                  --
+create TABLE as
+select
+  (CTAS)
+create TABLE high_value_customers as
+select
 
--- CREATE TABLE with bucketing (Spark/Hive)
-CREATE TABLE user_events (
-    user_id BIGINT,
-    event_type STRING,
-    event_timestamp TIMESTAMP
-)
-CLUSTERED BY (user_id) INTO 100 BUCKETS;
+  customer_id
+  ,name,
+  email
+  ,sum(order_total)                                                                                                                                                               as lifetime_value
+from customers c
+join orders o
+on c.customer_id = o.customer_id
+group by customer_id, name, email
+with partitioning(Spark/Hive)
+create TABLE sales(
+  sale_id BIGINT
+  ,product_id INT,
+  amount decimal(10, 2)
+  ,sale_date DATE
+  )
+  PARTITIONED by(year INT, month INT)
 
--- CREATE EXTERNAL TABLE (Spark/Hive)
-CREATE EXTERNAL TABLE external_data (
-    id INT,
-    value STRING
-)
-LOCATION '/path/to/data';
+                                                                                                                                                                                  --
+create TABLE
+with bucketing(Spark/Hive)
+create TABLE user_events(
+  user_id BIGINT
+  ,event_type STRING,
+  event_timestamp TIMESTAMP
+  )
+  CLUSTERED by(user_id) into 100 BUCKETS
 
--- CREATE TABLE with file format (Spark)
-CREATE TABLE parquet_table (
-    id INT,
-    name STRING
-)
-USING PARQUET
-OPTIONS (compression 'snappy');
+                                                                                                                                                                                  --
+create EXTERNAL table(Spark/Hive)
+create EXTERNAL TABLE external_data(
+  id INT
+  ,value STRING
+  )
+  LOCATION '/path/to/data'
 
--- CREATE TEMPORARY VIEW
-CREATE TEMPORARY VIEW active_customers AS
-SELECT *
-FROM customers
-WHERE status = 'active';
+                                                                                                                                                                                  --
+create TABLE
+with file format(Spark)
+create TABLE parquet_table(
+  id INT
+  ,name STRING
+  )
+using PARQUET
+  options(compression 'snappy')
 
--- CREATE OR REPLACE VIEW
-CREATE OR REPLACE VIEW customer_order_summary AS
-SELECT 
-    c.customer_id,
-    c.name,
-    COUNT(o.order_id) as order_count,
-    SUM(o.order_total) as total_spent
-FROM customers c
-LEFT JOIN orders o ON c.customer_id = o.customer_id
-GROUP BY c.customer_id, c.name;
+                                                                                                                                                                                  --
+create TEMPORARY VIEW
+create TEMPORARY VIEW active_customers as
+select
+  *
+from customers
+where status = 'active'
 
--- ALTER TABLE - Add column
-ALTER TABLE customers
-ADD COLUMN phone STRING;
+                                                                                                                                                                                  --
+create or replace VIEW
+create or replace VIEW customer_order_summary as
+select
 
--- ALTER TABLE - Multiple columns
-ALTER TABLE customers
-ADD COLUMNS (
-    phone STRING,
-    address STRING,
-    city STRING,
-    zip STRING
-);
+  c.customer_id
+  ,c.name,
+  count(o.order_id)                                                                                                                                                               as order_count
+  ,sum(o.order_total)                                                                                                                                                             as total_spent
+from customers c
+  left
+join orders o
+on c.customer_id = o.customer_id
+group by c.customer_id, c.name
+with cascade(some dialects)
+  DROP TABLE IF EXISTS parent_table CASCADE
 
--- ALTER TABLE - Drop column
-ALTER TABLE customers
-DROP COLUMN temp_column;
+                                                                                                                                                                                  -- DROP VIEW
+  DROP VIEW IF EXISTS old_view
 
--- ALTER TABLE - Rename column
-ALTER TABLE customers
-RENAME COLUMN old_name TO new_name;
+                                                                                                                                                                                  --
+truncate TABLE
+truncate TABLE staging_table
 
--- ALTER TABLE - Change column type
-ALTER TABLE customers
-ALTER COLUMN email TYPE VARCHAR(255);
+                                                                                                                                                                                  --
+truncate
+with partition(Spark/Hive)
+truncate TABLE sales partition(year=2023)
+  salary = salary * 1.05
+  reviewer_id = 101
 
--- ALTER TABLE - Add partition (Hive/Spark)
-ALTER TABLE sales
-ADD PARTITION (year=2024, month=1)
-LOCATION '/data/sales/2024/01';
+                                                                                                                                                                                  -- INSERT overwrite(Spark/Hive)
+  ) s
+on i.product_id = s.product_id
+  WHEN MATCHED and s.total_quantity > 0 THEN
+having sum(order_total) > 10000
 
--- ALTER TABLE - Drop partition
-ALTER TABLE sales
-DROP PARTITION (year=2023, month=1);
 
--- ALTER TABLE - Rename table
-ALTER TABLE old_table_name
-RENAME TO new_table_name;
+;
+create TABLE
 
--- DROP TABLE
-DROP TABLE IF EXISTS temp_table;
+                                                                                                                                                                                  -- ALTER TABLE - Add column
+;
+  ALTER TABLE customers
+  ADD COLUMN phone STRING
 
--- DROP TABLE with CASCADE (some dialects)
-DROP TABLE IF EXISTS parent_table CASCADE;
+                                                                                                                                                                                  -- ALTER TABLE - Multiple columns
+;
+  ALTER TABLE customers
+  ADD columns(
+  phone STRING
+  ,address STRING,
+  city STRING
+  ,zip STRING
+  )
 
--- DROP VIEW
-DROP VIEW IF EXISTS old_view;
+                                                                                                                                                                                  -- ALTER TABLE - Drop column
+;
+  ALTER TABLE customers
+;
+  DROP COLUMN temp_column
 
--- TRUNCATE TABLE
-TRUNCATE TABLE staging_table;
+                                                                                                                                                                                  -- ALTER TABLE - Rename column
+;
+  ALTER TABLE customers
+  RENAME COLUMN old_name TO new_name
 
--- TRUNCATE with partition (Spark/Hive)
-TRUNCATE TABLE sales PARTITION (year=2023);
+                                                                                                                                                                                  -- ALTER TABLE - Change column type
+;
+  ALTER TABLE customers
+;
+  ALTER COLUMN email TYPE varchar(255)
+
+                                                                                                                                                                                  -- ALTER TABLE - Add partition(Hive/Spark)
+;
+  ALTER TABLE sales
+  ADD partition(year=2024, month=1)
+  LOCATION '/data/sales/2024/01'
+
+                                                                                                                                                                                  -- ALTER TABLE - Drop partition
+;
+  ALTER TABLE sales
+;
+  DROP partition(year=2023, month=1)
+
+                                                                                                                                                                                  -- ALTER TABLE - Rename table
+;
+  ALTER TABLE old_table_name
+  RENAME TO new_table_name
+
+                                                                                                                                                                                  -- DROP TABLE
+;
+  DROP TABLE IF EXISTS temp_table
+
+                                                                                                                                                                                  -- DROP TABLE
+;

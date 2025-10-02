@@ -22,42 +22,42 @@ Create test files covering:
   - Simple SELECT statements
   - Single and multi-table queries
   - WHERE, GROUP BY, ORDER BY combinations
-  
+
 - **CTEs and Subqueries** (`examples/02-ctes-subqueries.sql`)
   - Single and nested CTEs
   - Correlated subqueries
   - CTE with multiple references
-  
+
 - **Joins** (`examples/03-joins.sql`)
   - INNER, LEFT, RIGHT, FULL OUTER
   - Self-joins
   - Multiple join conditions
   - USING clause with various column counts
-  
+
 - **Complex Expressions** (`examples/04-expressions.sql`)
   - CASE statements (simple and searched)
   - Window functions (OVER clauses)
   - Nested functions
   - Arithmetic and string operations
-  
+
 - **Spark/Databricks Specific** (`examples/05-spark-specific.sql`)
   - named_struct()
   - Backtick identifiers
   - Table-valued functions
   - LATERAL VIEW
-  
+
 - **DML/DDL** (`examples/06-dml-ddl.sql`)
   - INSERT, UPDATE, DELETE
   - MERGE statements
   - CREATE TABLE
   - ALTER TABLE
-  
+
 - **Comments and Strings** (`examples/07-comments-strings.sql`)
   - Inline comments
   - Block comments
   - SQL keywords in strings
   - SQL keywords in comments
-  
+
 - **Edge Cases** (`examples/08-edge-cases.sql`)
   - Empty queries
   - Very long lines
@@ -98,17 +98,17 @@ For each example:
 for sql_file in examples:
     original = read_file(sql_file)
     formatted = format_sql(original)
-    
+
     result_original = execute_sql(original)
     result_formatted = execute_sql(formatted)
-    
+
     assert result_original == result_formatted
     assert parse_sql(formatted) is valid  # Syntax check
 ```
 
 #### 2.2 SQL Syntax Validation
 - Use SQL parser library to validate syntax
-- Options: 
+- Options:
   - `sql-parser` (JS/TS)
   - `sqlparse` (Python)
   - Spark SQL parser (if available)
@@ -159,7 +159,7 @@ Test formatter behavior with:
 - Invalid keywords
 - Truncated statements
 
-**Expected Behavior**: 
+**Expected Behavior**:
 - Option A: Return original (fail gracefully)
 - Option B: Format best-effort, warn user
 - Option C: Throw clear error message
