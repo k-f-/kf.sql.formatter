@@ -2,7 +2,7 @@
   "name": "kf-sql-formatter",
   "displayName": "KF SQL Formatter (Databricks/Spark)",
   "description": "SQL formatter for Databricks/Spark SQL matching your org's conventions.",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "publisher": "kef",
   "repository": {
     "type": "git",
@@ -23,15 +23,15 @@
     "commands": [
       {
         "command": "databricksSqlFormatter.autoAliasAll",
-        "title": "Databricks SQL: Auto-Alias Everything (Semantic)"
+        "title": "KF SQL Formatter: Auto-Alias Everything (Semantic)"
       },
       {
         "command": "databricksSqlFormatter.fixSemicolons",
-        "title": "Databricks SQL: Normalize Semicolons"
+        "title": "KF SQL Formatter: Normalize Semicolons"
       }
     ],
     "configuration": {
-      "title": "Databricks SQL Formatter",
+      "title": "KF SQL Formatter",
       "properties": {
         "databricksSqlFormatter.keywordCase": {
           "type": "string",

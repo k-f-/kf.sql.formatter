@@ -1,7 +1,7 @@
 # KF SQL Formatter (Databricks/Spark)
 
 ![Build Status](https://github.com/k-f-/kf.sql.formatter/workflows/CI/badge.svg)
-![Version](https://img.shields.io/badge/version-0.0.1-blue)
+![Version](https://img.shields.io/badge/version-0.0.2-blue)
 [![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 
 A VS Code formatter for Databricks/Spark SQL that enforces your organization's formatting standards.
@@ -10,7 +10,7 @@ A VS Code formatter for Databricks/Spark SQL that enforces your organization's f
 
 ### Option 1: Direct Download (Recommended)
 
-**[⬇️ Download Latest Release (v0.0.1)](https://github.com/k-f-/kf.sql.formatter/releases/download/v0.0.1/kf-sql-formatter-0.0.1.vsix)**
+**[⬇️ Download Latest Release (v0.0.2)](https://github.com/k-f-/kf.sql.formatter/releases/download/v0.0.2/kf-sql-formatter-0.0.2.vsix)**
 
 After downloading:
 
