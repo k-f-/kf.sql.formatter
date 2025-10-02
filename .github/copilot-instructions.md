@@ -57,7 +57,7 @@ The codebase follows a multi-pass formatting architecture:
 
 ### Testing
 
-**CRITICAL**: See `TESTING_PLAN.md` for comprehensive testing strategy.
+**CRITICAL**: See `docs/development/TESTING_PLAN.md` for comprehensive testing strategy.
 
 #### Testing Requirements (All Changes)
 1. **Aesthetic Validation**: Test against `examples/` directory
@@ -81,6 +81,15 @@ The codebase follows a multi-pass formatting architecture:
 - `examples/06-dml-ddl.sql` - INSERT, UPDATE, MERGE, etc.
 - `examples/07-comments-strings.sql` - Comment and string handling
 - `examples/08-edge-cases.sql` - Edge cases and stress tests
+
+#### Running Tests
+
+```bash
+node tests/test-examples.js    # Main test suite (8 example files)
+node tests/run-suite.js        # Full test suite runner
+```
+
+Legacy test files are archived in `tests/legacy/` for reference only.
 
 ### Building
 
@@ -121,7 +130,7 @@ npm run lint:fix   # Auto-fix markdown linting errors
 5. **Pre-commit hook troubleshooting**:
    - If hook doesn't run: `chmod +x .husky/pre-commit`
    - Test manually: `npx lint-staged`
-   - See `MARKDOWN_LINTING.md` for detailed troubleshooting
+   - See `docs/development/MARKDOWN_LINTING.md` for detailed troubleshooting
 
 **Note**: The pre-commit hook ensures all committed markdown is properly formatted without manual effort.
 
@@ -131,7 +140,25 @@ npm run lint:fix   # Auto-fix markdown linting errors
 - **Build output**: `dist/` (gitignored)
 - **Configuration**: `package.json` (extension manifest and npm config)
 - **TypeScript config**: `tsconfig.json`
-- **Documentation**: `README.md`, `projectSpec.md`, `CHANGELOG.md`
+- **Core documentation**: Root directory
+  - `README.md` - User-facing documentation
+  - `CHANGELOG.md` - Version history
+  - `LICENSE` - Project license
+- **Development docs**: `docs/development/`
+  - `PROJECT_SPEC.md` - Detailed formatting specification
+  - `TESTING_PLAN.md` - Comprehensive testing strategy
+  - `TESTING_IN_VSCODE.md` - Manual testing guide
+  - `TROUBLESHOOTING.md` - Debugging guide
+  - `MARKDOWN_LINTING.md` - Linting setup and troubleshooting
+- **Release docs**: `docs/releases/`
+  - `RELEASE_CHECKLIST.md` - Release process checklist
+  - `QUICK_RELEASE.md` - Quick release guide
+  - `v0.0.X/` - Version-specific release notes and summaries
+- **Archived docs**: `docs/archive/` - Historical/legacy documentation
+- **Tests**: `tests/`
+  - `test-examples.js` - Main test suite
+  - `run-suite.js` - Full test runner
+  - `legacy/` - Archived test scripts and outputs
 
 ### Configuration System
 
@@ -151,7 +178,7 @@ Key settings:
 1. Create new file in `src/passes/` with sequential number
 2. Export a function that takes text and config, returns transformed text
 3. Import and call in `src/formatter.ts` in the correct sequence
-4. Update `projectSpec.md` to document the new feature
+4. Update `docs/development/PROJECT_SPEC.md` to document the new feature
 
 #### Modifying Existing Pass
 
@@ -164,7 +191,7 @@ Key settings:
 
 1. Add to `package.json` under `contributes.configuration.properties`
 2. Update TypeScript types in relevant modules
-3. Document in `README.md` and `projectSpec.md`
+3. Document in `README.md` and `docs/development/PROJECT_SPEC.md`
 4. Provide sensible defaults
 
 ### Common Pitfalls
@@ -304,7 +331,7 @@ git commit -m "test: Verify idempotence for all example files"
 git commit -m "feat: Implement CASE expression breaking
 
 - Breaks long CASE expressions across lines
-- Aligns WHEN clauses consistently  
+- Aligns WHEN clauses consistently
 - Preserves inline comments in CASE blocks"
 ```
 
@@ -388,7 +415,7 @@ git push origin --delete feature/<descriptive-name>
 # 1. Update version files
 # Edit package.json: "version": "0.0.x"
 # Edit README.md: version badge and download link
-# Create RELEASE_NOTES_v0.0.x.md (optional)
+# Create docs/releases/v0.0.x/RELEASE_NOTES.md (optional)
 
 # 2. Commit version bump
 git add package.json README.md
@@ -407,7 +434,7 @@ git push origin v0.0.x
 # - Create GitHub release with VSIX
 ```
 
-See `QUICK_RELEASE.md` and `RELEASE_CHECKLIST.md` for details.
+See `docs/releases/QUICK_RELEASE.md` and `docs/releases/RELEASE_CHECKLIST.md` for details.
 
 ### Development Branches
 - **`main`**: Production-ready code, tagged releases only
@@ -444,12 +471,12 @@ git commit -m "feat: Integrate QUALIFY pass into formatter pipeline"
 git add examples/10-qualify-test.sql
 git commit -m "test: Add QUALIFY clause test examples"
 
-git add README.md projectSpec.md
+git add README.md docs/development/PROJECT_SPEC.md
 git commit -m "docs: Document QUALIFY clause support"
 
 # 3. Test everything
 npm run compile
-node test-examples-formatter.js
+node tests/test-examples.js
 
 # 4. Push and create PR (if applicable)
 git push origin feature/add-qualify-support
@@ -474,8 +501,8 @@ When making changes to formatting logic:
 
 ## Getting Help
 
-- Review `TESTING_PLAN.md` for comprehensive testing strategy
-- Review `projectSpec.md` for detailed formatting rules
+- Review `docs/development/TESTING_PLAN.md` for comprehensive testing strategy
+- Review `docs/development/PROJECT_SPEC.md` for detailed formatting rules
 - Check `README.md` for user-facing feature documentation
 - Examine existing passes in `src/passes/` for patterns
 - Look at `src/formatter.ts` to understand pass orchestration
