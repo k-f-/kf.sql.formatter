@@ -99,7 +99,7 @@ jobs:
         run: |
           # Get previous tag
           PREV_TAG=$(git tag --sort=-v:refname | grep -A1 "${{ steps.get_version.outputs.TAG }}" | tail -1)
-          
+
           if [ -z "$PREV_TAG" ]; then
             echo "First release - using all commits"
             COMMIT_RANGE="HEAD"
@@ -107,11 +107,11 @@ jobs:
             echo "Previous tag: $PREV_TAG"
             COMMIT_RANGE="$PREV_TAG..${{ steps.get_version.outputs.TAG }}"
           fi
-          
+
           # Generate changelog from commits
           echo "## What's Changed" > /tmp/auto-release-notes.md
           echo "" >> /tmp/auto-release-notes.md
-          
+
           # Group commits by type
           git log $COMMIT_RANGE --pretty=format:"%s" | while read commit; do
             case "$commit" in
@@ -141,7 +141,7 @@ jobs:
                 ;;
             esac
           done
-          
+
           # Assemble changelog
           [ -f /tmp/features.txt ] && echo "### ✨ Features" >> /tmp/auto-release-notes.md && cat /tmp/features.txt >> /tmp/auto-release-notes.md && echo "" >> /tmp/auto-release-notes.md
           [ -f /tmp/fixes.txt ] && echo "### 🐛 Bug Fixes" >> /tmp/auto-release-notes.md && cat /tmp/fixes.txt >> /tmp/auto-release-notes.md && echo "" >> /tmp/auto-release-notes.md
@@ -151,14 +151,14 @@ jobs:
           [ -f /tmp/refactor.txt ] && echo "### ♻️ Refactoring" >> /tmp/auto-release-notes.md && cat /tmp/refactor.txt >> /tmp/auto-release-notes.md && echo "" >> /tmp/auto-release-notes.md
           [ -f /tmp/chore.txt ] && echo "### 🔧 Maintenance" >> /tmp/auto-release-notes.md && cat /tmp/chore.txt >> /tmp/auto-release-notes.md && echo "" >> /tmp/auto-release-notes.md
           [ -f /tmp/other.txt ] && echo "### Other Changes" >> /tmp/auto-release-notes.md && cat /tmp/other.txt >> /tmp/auto-release-notes.md && echo "" >> /tmp/auto-release-notes.md
-          
+
           # Add installation instructions
           echo "## 📦 Installation" >> /tmp/auto-release-notes.md
           echo "" >> /tmp/auto-release-notes.md
           echo '```bash' >> /tmp/auto-release-notes.md
           echo "code --install-extension kf-sql-formatter-${{ steps.get_version.outputs.VERSION }}.vsix" >> /tmp/auto-release-notes.md
           echo '```' >> /tmp/auto-release-notes.md
-          
+
           cat /tmp/auto-release-notes.md
           echo "AUTO_NOTES_FILE=/tmp/auto-release-notes.md" >> $GITHUB_ENV
 
